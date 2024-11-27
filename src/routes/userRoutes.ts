@@ -1,10 +1,11 @@
+import { ErrorWithStatus } from "../middleware/errorHandler";
 import { mockUsers } from "../mock-data/users";
 import express from "express";
 
 const router = express.Router();
 
 /* -------------------------------- All users ------------------------------- */
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
   // check for a "limit" query parameter
 
   const queryLimit = req.query.limit;
@@ -16,8 +17,8 @@ router.get("/", (req, res) => {
 
   const limit = parseInt(queryLimit as string);
   if (limit < 0 || isNaN(limit)) {
-    res.status(400).json({ error: "Limit should be a positive number" });
-    return;
+    const error = new ErrorWithStatus(400, "Limit must be a positive number");
+    next(error);
   }
 
   const slicedUsers = mockUsers.slice(0, limit);
@@ -26,13 +27,12 @@ router.get("/", (req, res) => {
 });
 
 /* ------------------------------- Single user ------------------------------ */
-router.get("/:id", (req, res) => {
+router.get("/:id", (req, res, next) => {
   const userId = parseInt(req.params.id);
   const user = mockUsers.find((user) => user.id === userId);
 
   if (!user) {
-    res.status(404).json({ error: "User not found" });
-    return;
+    const error = new ErrorWithStatus(404, "User not found");
   }
 
   // 200 OK = Generic success response
@@ -41,12 +41,12 @@ router.get("/:id", (req, res) => {
 
 /* ------------------------------ Add new user ------------------------------ */
 
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
   const newUser = req.body;
 
   if (!newUser.name || !newUser.email) {
-    res.status(400).json({ error: "Please provide name and email" });
-    return;
+    const error = new ErrorWithStatus(400, "Name and email are required");
+    next(error);
   }
 
   newUser.id = mockUsers.length + 1;
@@ -59,13 +59,13 @@ export default router;
 
 /* -------------------------------- Edit user ------------------------------- */
 
-router.put("/:id", (req, res) => {
+router.put("/:id", (req, res, next) => {
   const userId = parseInt(req.params.id);
   const userIndex = mockUsers.findIndex((user) => user.id === userId);
 
   if (userIndex === -1) {
-    res.status(404).json({ error: "User not found" });
-    return;
+    const error = new ErrorWithStatus(404, "User not found");
+    next(error);
   }
 
   const updatedUser = { ...mockUsers[userIndex], ...req.body };
@@ -76,13 +76,13 @@ router.put("/:id", (req, res) => {
 
 /* ------------------------------- Delete user ------------------------------ */
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", (req, res, next) => {
   const userId = parseInt(req.params.id);
   const userIndex = mockUsers.findIndex((user) => user.id === userId);
 
   if (userIndex === -1) {
-    res.status(404).json({ error: "User not found" });
-    return;
+    const error = new ErrorWithStatus(404, "User not found");
+    next(error);
   }
 
   // 204 No content = We did the thing, no need to return anything

@@ -1,6 +1,7 @@
 import express from "express";
 import userRouter from "./routes/userRoutes";
 import logger from "./middleware/logger";
+import errorHandler from "./middleware/errorHandler";
 
 const PORT = process.env.PORT || 8080;
 
@@ -10,8 +11,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Enable logging
-app.use(logger);
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
@@ -20,6 +19,16 @@ app.use("/api/users", userRouter);
 app.get("/", (req, res) => {
   res.send("Hello world!");
 });
+
+/* -------------------------------------------------------------------------- */
+/*                                 Middleware                                 */
+/* -------------------------------------------------------------------------- */
+
+// Enable logging
+app.use(logger);
+
+// Error handling
+app.use(errorHandler);
 
 /* ------------------------------ Start server ------------------------------ */
 app.listen(PORT, () => {
