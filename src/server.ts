@@ -1,5 +1,6 @@
 import express from "express";
 import userRouter from "./routes/userRoutes";
+import logger from "./middleware/logger";
 
 const PORT = process.env.PORT || 8080;
 
@@ -9,6 +10,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Enable logging
+app.use(logger);
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
