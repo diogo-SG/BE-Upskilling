@@ -1,4 +1,5 @@
 import http from "http";
+import { sampleUsers } from "./utils/sample-data";
 
 const PORT = process.env.PORT || 3000;
 
@@ -12,13 +13,18 @@ const server = http.createServer((req, res) => {
   const url = req.url;
   const method = req.method;
 
-  res.writeHead(200, { "Content-Type": "text/html" });
   if (method === "GET") {
-    if (url === "/") {
-      return res.end("<h1>Hello World</h1>");
-    }
-    if (url === "/about") {
-      return res.end("<h1>About Page</h1>");
+    if (url === "/api/users") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      return res.end(JSON.stringify(sampleUsers));
+    } else {
+      res.writeHead(200, { "Content-Type": "text/html" });
+      if (url === "/") {
+        return res.end("<h1>Hello World</h1>");
+      }
+      if (url === "/about") {
+        return res.end("<h1>About Page</h1>");
+      }
     }
   }
 });
