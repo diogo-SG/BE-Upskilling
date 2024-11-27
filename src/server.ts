@@ -5,6 +5,10 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+// Enable body parsing
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
