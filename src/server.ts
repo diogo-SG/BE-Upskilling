@@ -2,6 +2,7 @@ import express from "express";
 import userRouter from "./routes/userRoutes";
 import logger from "./middleware/logger";
 import errorHandler from "./middleware/errorHandler";
+import catchAllError from "./middleware/catchAllError";
 
 const PORT = process.env.PORT || 8080;
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 app.use(logger);
 
 // Error handling
+app.use(catchAllError);
 app.use(errorHandler);
 
 /* ------------------------------ Start server ------------------------------ */
