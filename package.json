@@ -1,0 +1,26 @@
+{
+  "name": "be-upskilling",
+  "version": "1.0.0",
+  "description": "BE Upskilling",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diogo-SG/BE-Upskilling.git"
+  },
+  "author": "Diogo Carneiro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diogo-SG/BE-Upskilling/issues"
+  },
+  "homepage": "https://github.com/diogo-SG/BE-Upskilling#readme",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.2"
+  }
+}
