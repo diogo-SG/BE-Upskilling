@@ -2,10 +2,10 @@
   "name": "be-upskilling",
   "version": "1.0.0",
   "description": "BE Upskilling",
-  "main": "index.ts",
+  "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -18,9 +18,13 @@
   },
   "homepage": "https://github.com/diogo-SG/BE-Upskilling#readme",
   "devDependencies": {
+    "@types/express": "^5.0.0",
     "@types/node": "^22.10.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "express": "^4.21.1"
   }
 }
