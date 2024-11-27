@@ -7,9 +7,22 @@ const server = http.createServer((req, res) => {
   // res.end();
 
   // if only returning a single chunk of data, we can just do:
-  res.end("Hello World");
+  //res.end("Hello World");
+
+  const url = req.url;
+  const method = req.method;
+
+  res.writeHead(200, { "Content-Type": "text/html" });
+  if (method === "GET") {
+    if (url === "/") {
+      return res.end("<h1>Hello World</h1>");
+    }
+    if (url === "/about") {
+      return res.end("<h1>About Page</h1>");
+    }
+  }
 });
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} `);
+  console.log(`Server running on port ${PORT}`);
 });
