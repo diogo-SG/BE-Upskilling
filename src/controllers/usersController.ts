@@ -1,10 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { mockUsers } from "../mock-data/users";
 import { ErrorWithStatus } from "../middleware/errorHandler";
+import UsersService from "../services/usersService";
 
 /* -------------------------------------------------------------------------- */
 /*                               User Controller                              */
 /* -------------------------------------------------------------------------- */
+
+const UsersController = {
+  getAllUsers,
+  getSingleUser,
+  addNewUser,
+  editUser,
+  deleteUser,
+};
 
 /* ------------------------------ Get all users ----------------------------- */
 
@@ -13,7 +22,7 @@ import { ErrorWithStatus } from "../middleware/errorHandler";
  * @throws - a 400 error if the limit query param is invalid
  * @example - GET /api/users?limit=5
  */
-export function getAllUsers(req: Request, res: Response, next: NextFunction) {
+function getAllUsers(req: Request, res: Response, next: NextFunction) {
   // check for a "limit" query parameter
 
   const queryLimit = req.query.limit;
@@ -29,9 +38,9 @@ export function getAllUsers(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 
-  const slicedUsers = mockUsers.slice(0, limit);
+  const fetchedUsers = UsersService.getAllUsers(limit);
 
-  res.status(200).json(slicedUsers);
+  res.status(200).json(fetchedUsers);
 }
 
 /* ----------------------------- Get single user ---------------------------- */
@@ -41,9 +50,9 @@ export function getAllUsers(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - GET /api/users/1
  */
-export function getSingleUser(req: Request, res: Response, next: NextFunction) {
+function getSingleUser(req: Request, res: Response, next: NextFunction) {
   const userId = parseInt(req.params.id);
-  const user = mockUsers.find((user) => user.id === userId);
+  const user = UsersService.getSingleUser(userId);
 
   if (!user) {
     const error = new ErrorWithStatus(404, "User not found");
@@ -61,19 +70,18 @@ export function getSingleUser(req: Request, res: Response, next: NextFunction) {
  * @throws - a 400 error if the request body is invalid
  * @example - POST /api/users
  */
-export function addNewUser(req: Request, res: Response, next: NextFunction) {
-  const newUser = req.body;
+function addNewUser(req: Request, res: Response, next: NextFunction) {
+  const newUserData = req.body;
 
-  if (!newUser.name || !newUser.email) {
+  if (!newUserData.name || !newUserData.email) {
     const error = new ErrorWithStatus(400, "Name and email are required");
     next(error);
   }
 
-  newUser.id = mockUsers.length + 1;
-  const mockUsersWithNew = [...mockUsers, newUser];
+  const newUser = UsersService.addNewUser(req.body);
 
   // 201 Created = We created a new resource
-  res.status(201).json(mockUsersWithNew);
+  res.status(201).json(newUser);
 }
 
 /* -------------------------------- Edit user ------------------------------- */
@@ -83,19 +91,23 @@ export function addNewUser(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - PUT /api/users/1
  */
-export function editUser(req: Request, res: Response, next: NextFunction) {
+async function editUser(req: Request, res: Response, next: NextFunction) {
   const userId = parseInt(req.params.id);
-  const userIndex = mockUsers.findIndex((user) => user.id === userId);
 
-  if (userIndex === -1) {
-    const error = new ErrorWithStatus(404, "User not found");
+  const incomingUpdateData = req.body;
+
+  if (!incomingUpdateData.name || !incomingUpdateData.email) {
+    const error = new ErrorWithStatus(400, "Name and email are required");
     next(error);
   }
 
-  const updatedUser = { ...mockUsers[userIndex], ...req.body };
-  mockUsers[userIndex] = updatedUser;
+  try {
+    const updatedUser = await UsersService.editUser(userId, incomingUpdateData);
 
-  res.status(200).json(updatedUser);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    next(error);
+  }
 }
 
 /* ------------------------------- Delete user ------------------------------ */
@@ -105,15 +117,16 @@ export function editUser(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - DELETE /api/users/1
  */
-export function deleteUser(req: Request, res: Response, next: NextFunction) {
-  const userId = parseInt(req.params.id);
-  const userIndex = mockUsers.findIndex((user) => user.id === userId);
+function deleteUser(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = parseInt(req.params.id);
+    const deletedUser = UsersService.deleteUser(userId);
 
-  if (userIndex === -1) {
-    const error = new ErrorWithStatus(404, "User not found");
+    // 204 No content = We did the thing, no need to return anything
+    res.status(204).send();
+  } catch (error) {
     next(error);
   }
-
-  // 204 No content = We did the thing, no need to return anything
-  res.status(204).send();
 }
+
+export default UsersController;
