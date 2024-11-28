@@ -1,9 +1,10 @@
 import UsersController from "../controllers/usersController";
-import { query, param, body } from "express-validator";
+import { query, param, body, checkSchema } from "express-validator";
 
 const { getAllUsers, getSingleUser, addNewUser, editUser, deleteUser } = UsersController;
 
 import express from "express";
+import { editUserValidationSchema } from "../validationSchemas/userValidationSchemas";
 
 const router = express.Router();
 
@@ -26,13 +27,15 @@ const addNewUserValidation = [
 router.post("/", addNewUserValidation, addNewUser);
 
 /* ------------------------------ Edit user ------------------------------ */
-const editUserValidation = [
-  param("id").isNumeric().withMessage("User ID must be a number"),
-  body("name").trim().isString().withMessage("Name must be a string").optional(),
-  body("email").trim().isEmail().withMessage("Email is invalid").optional(),
-];
+// const editUserValidation = [
+//   param("id").isNumeric().withMessage("User ID must be a number"),
+//   body("name").trim().isString().withMessage("Name must be a string").optional(),
+//   body("email").trim().isEmail().withMessage("Email is invalid").optional(),
+// ];
 
-router.put("/:id", editUserValidation, editUser);
+// Trying out validation schemas too
+
+router.put("/:id", checkSchema(editUserValidationSchema), editUser);
 
 /* ------------------------------ Delete user ------------------------------ */
 
