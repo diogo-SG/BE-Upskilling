@@ -1,4 +1,6 @@
-import { addNewUser, deleteUser, editUser, getAllUsers, getSingleUser } from "../controllers/usersController";
+import UsersController from "../controllers/usersController";
+
+const { getAllUsers, getSingleUser, addNewUser, editUser, deleteUser } = UsersController;
 
 import express from "express";
 
