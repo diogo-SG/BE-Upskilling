@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { mockUsers } from "../mock-data/users";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import UsersService from "../services/usersService";
+import { matchedData, validationResult } from "express-validator";
 
 /* -------------------------------------------------------------------------- */
 /*                               User Controller                              */
@@ -22,23 +23,23 @@ const UsersController = {
  * @throws - a 400 error if the limit query param is invalid
  * @example - GET /api/users?limit=5
  */
-function getAllUsers(req: Request, res: Response, next: NextFunction) {
-  // check for a "limit" query parameter
-
-  const queryLimit = req.query.limit;
-
-  if (typeof queryLimit === "undefined") {
-    res.status(200).json(mockUsers);
-    return;
-  }
-
-  const limit = parseInt(queryLimit as string);
-  if (limit < 0 || isNaN(limit)) {
+async function getAllUsers(req: Request, res: Response, next: NextFunction) {
+  const valRes = validationResult(req);
+  if (!valRes.isEmpty()) {
+    console.log(valRes);
     const error = new ErrorWithStatus(400, "Limit must be a positive number");
     next(error);
   }
 
-  const fetchedUsers = UsersService.getAllUsers(limit);
+  const data = matchedData(req);
+
+  if (typeof data.limit === "undefined") {
+    res.status(200).json(mockUsers);
+    return;
+  }
+
+  const limit = parseInt(data.limit as string);
+  const fetchedUsers = await UsersService.getAllUsers(limit);
 
   res.status(200).json(fetchedUsers);
 }
@@ -50,7 +51,12 @@ function getAllUsers(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - GET /api/users/1
  */
-function getSingleUser(req: Request, res: Response, next: NextFunction) {
+async function getSingleUser(req: Request, res: Response, next: NextFunction) {
+  if (!validationResult(req).isEmpty()) {
+    const error = new ErrorWithStatus(400, "User ID must be a number");
+    next(error);
+  }
+
   const userId = parseInt(req.params.id);
   const user = UsersService.getSingleUser(userId);
 
@@ -70,15 +76,24 @@ function getSingleUser(req: Request, res: Response, next: NextFunction) {
  * @throws - a 400 error if the request body is invalid
  * @example - POST /api/users
  */
-function addNewUser(req: Request, res: Response, next: NextFunction) {
-  const newUserData = req.body;
+async function addNewUser(req: Request, res: Response, next: NextFunction) {
+  if (!validationResult(req).isEmpty()) {
+    const errorsList = validationResult(req).array();
 
-  if (!newUserData.name || !newUserData.email) {
-    const error = new ErrorWithStatus(400, "Name and email are required");
+    // We could make this look much nicer but I'm lazy and don't think it's worth the time investment atm
+    const errorMsg = errorsList
+      .map((error) => {
+        if (error.type === "field") {
+          return `${error.path}: ${error.msg}`;
+        }
+      })
+      .join("; ");
+    const error = new ErrorWithStatus(400, errorMsg);
     next(error);
   }
+  const data = matchedData(req);
 
-  const newUser = UsersService.addNewUser(req.body);
+  const newUser = await UsersService.addNewUser(data);
 
   // 201 Created = We created a new resource
   res.status(201).json(newUser);
@@ -94,10 +109,25 @@ function addNewUser(req: Request, res: Response, next: NextFunction) {
 async function editUser(req: Request, res: Response, next: NextFunction) {
   const userId = parseInt(req.params.id);
 
-  const incomingUpdateData = req.body;
+  if (!validationResult(req).isEmpty()) {
+    const errorsList = validationResult(req).array();
+    // We could make this look much nicer but I'm lazy and don't think it's worth the time investment atm
+    const errorMsg = errorsList
+      .map((error) => {
+        if (error.type === "field") {
+          return `${error.path}: ${error.msg}`;
+        }
+      })
+      .join("; ");
+    const error = new ErrorWithStatus(400, errorMsg);
 
-  if (!incomingUpdateData.name || !incomingUpdateData.email) {
-    const error = new ErrorWithStatus(400, "Name and email are required");
+    next(error);
+  }
+
+  const incomingUpdateData = matchedData(req);
+
+  if (!incomingUpdateData.name && !incomingUpdateData.email) {
+    const error = new ErrorWithStatus(400, "At least one update field is required");
     next(error);
   }
 
@@ -117,12 +147,18 @@ async function editUser(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - DELETE /api/users/1
  */
-function deleteUser(req: Request, res: Response, next: NextFunction) {
+async function deleteUser(req: Request, res: Response, next: NextFunction) {
   try {
+    if (!validationResult(req).isEmpty()) {
+      const error = new ErrorWithStatus(400, "User ID must be a number");
+      next(error);
+    }
     const userId = parseInt(req.params.id);
-    const deletedUser = UsersService.deleteUser(userId);
+    await UsersService.deleteUser(userId);
 
     // 204 No content = We did the thing, no need to return anything
+    // I guess in this case a 200 OK would also be fine with a message saying it was deleted successfully
+    // but this helps me try different statuses out so I'm aware of them
     res.status(204).send();
   } catch (error) {
     next(error);

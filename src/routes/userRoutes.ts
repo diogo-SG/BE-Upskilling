@@ -1,4 +1,5 @@
 import UsersController from "../controllers/usersController";
+import { query, param, body } from "express-validator";
 
 const { getAllUsers, getSingleUser, addNewUser, editUser, deleteUser } = UsersController;
 
@@ -6,14 +7,37 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/", getAllUsers);
+/* -------------------------------- All users ------------------------------- */
+const allUsersValidation = [query("limit").isNumeric().withMessage("Limit must be a number").optional()];
 
-router.get("/:id", getSingleUser);
+router.get("/", allUsersValidation, getAllUsers);
 
-router.post("/", addNewUser);
+/* ----------------------------- Single user ------------------------------ */
+const singleUserValidation = [param("id").isNumeric().withMessage("User ID must be a number")];
 
-router.put("/:id", editUser);
+router.get("/:id", singleUserValidation, getSingleUser);
 
-router.delete("/:id", deleteUser);
+/* ------------------------------ Add user ------------------------------- */
+const addNewUserValidation = [
+  body("name").trim().notEmpty().withMessage("Name is required").isString().withMessage("Name must be a string"),
+  body("email").trim().notEmpty().withMessage("Email is required").isEmail().withMessage("Email is invalid"),
+];
+
+router.post("/", addNewUserValidation, addNewUser);
+
+/* ------------------------------ Edit user ------------------------------ */
+const editUserValidation = [
+  param("id").isNumeric().withMessage("User ID must be a number"),
+  body("name").trim().isString().withMessage("Name must be a string").optional(),
+  body("email").trim().isEmail().withMessage("Email is invalid").optional(),
+];
+
+router.put("/:id", editUserValidation, editUser);
+
+/* ------------------------------ Delete user ------------------------------ */
+
+const deleteUserValidation = [param("id").isNumeric().withMessage("User ID must be a number")];
+
+router.delete("/:id", deleteUserValidation, deleteUser);
 
 export default router;
