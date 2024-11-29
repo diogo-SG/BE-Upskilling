@@ -2,6 +2,8 @@
 /*                                Users Service                               */
 /* -------------------------------------------------------------------------- */
 
+import client from "../database/config";
+import * as UserQueries from "../database/queries/userQueries";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import { mockUsers } from "../mock-data/users";
 import { UserSchema } from "../schemas/users";
@@ -13,8 +15,6 @@ const UsersService = {
   editUser,
   deleteUser,
 };
-
-// These would all be database operations in a real app, so they're async
 
 /* ------------------------------ Get all users ----------------------------- */
 
@@ -35,20 +35,30 @@ async function getSingleUser(userId: number) {
 /* ------------------------------ Add new user ------------------------------ */
 
 async function addNewUser(newUserData: Partial<UserSchema>) {
-  const { name, email } = newUserData;
+  const { name, email, password, username } = newUserData;
 
-  if (!name || !email) {
-    throw new ErrorWithStatus(400, "Name and email are required");
+  if (!name || !email || !password || !username) {
+    throw new ErrorWithStatus(400, "Name, email, username and password are required");
   }
 
-  const newUser = {
-    id: mockUsers.length + 1,
-    name,
-    email,
-  };
+  // todo fix issues with error handling
+  client.query(UserQueries.checkIfUserExistsByEmail, [email], (error, result) => {
+    if (error) {
+      throw new ErrorWithStatus(500, "Something went wrong");
+    }
 
-  mockUsers.push(newUser);
-  return newUser;
+    if (result.rows.length > 0) {
+      throw new ErrorWithStatus(400, "User with this email already exists");
+    }
+  });
+
+  client.query(UserQueries.addNewUser, [name, email, password, username], (error, result) => {
+    if (error) {
+      throw new ErrorWithStatus(500, "Something went wrong");
+    }
+    console.log(result.rows[0]);
+    return result.rows[0];
+  });
 }
 
 /* -------------------------------- Edit user ------------------------------- */

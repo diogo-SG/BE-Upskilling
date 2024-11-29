@@ -1,12 +1,13 @@
 import UsersController from "../controllers/usersController";
 import { query, param, body, checkSchema } from "express-validator";
+import express from "express";
+import { addNewUserValidationSchema, editUserValidationSchema } from "../validation/userValidation";
 
 const { getAllUsers, getSingleUser, addNewUser, editUser, deleteUser } = UsersController;
 
-import express from "express";
-import { editUserValidationSchema } from "../validationSchemas/userValidationSchemas";
-
 const router = express.Router();
+
+// todo move validation to a separate file
 
 /* -------------------------------- All users ------------------------------- */
 const allUsersValidation = [query("limit").isNumeric().withMessage("Limit must be a number").optional()];
@@ -19,12 +20,8 @@ const singleUserValidation = [param("id").isNumeric().withMessage("User ID must 
 router.get("/:id", singleUserValidation, getSingleUser);
 
 /* ------------------------------ Add user ------------------------------- */
-const addNewUserValidation = [
-  body("name").trim().notEmpty().withMessage("Name is required").isString().withMessage("Name must be a string"),
-  body("email").trim().notEmpty().withMessage("Email is required").isEmail().withMessage("Email is invalid"),
-];
 
-router.post("/", addNewUserValidation, addNewUser);
+router.post("/", checkSchema(addNewUserValidationSchema), addNewUser);
 
 /* ------------------------------ Edit user ------------------------------ */
 // const editUserValidation = [

@@ -93,10 +93,14 @@ async function addNewUser(req: Request, res: Response, next: NextFunction) {
   }
   const data = matchedData(req);
 
-  const newUser = await UsersService.addNewUser(data);
-
-  // 201 Created = We created a new resource
-  res.status(201).json(newUser);
+  try {
+    const newUser = await UsersService.addNewUser(data);
+    console.log(newUser);
+    // 201 Created = We created a new resource
+    res.status(201).json(newUser);
+  } catch (error) {
+    next(error);
+  }
 }
 
 /* -------------------------------- Edit user ------------------------------- */
