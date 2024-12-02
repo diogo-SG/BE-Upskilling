@@ -1,19 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import { mockUsers } from "../mock-data/users";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import UsersService from "../services/usersService";
+import UsersService from "../services/userService";
 import { matchedData, validationResult } from "express-validator";
 
 /* -------------------------------------------------------------------------- */
 /*                               User Controller                              */
 /* -------------------------------------------------------------------------- */
 
-const UsersController = {
+const UserController = {
   getAllUsers,
-  getSingleUser,
+  getSingleUserById,
   addNewUser,
   editUser,
   deleteUser,
+  getAllOrdersFromUser,
 };
 
 /* ------------------------------ Get all users ----------------------------- */
@@ -33,11 +33,6 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
 
   const data = matchedData(req);
 
-  if (typeof data.limit === "undefined") {
-    res.status(200).json(mockUsers);
-    return;
-  }
-
   const limit = parseInt(data.limit as string);
   const fetchedUsers = await UsersService.getAllUsers(limit);
 
@@ -51,14 +46,14 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - GET /api/users/1
  */
-async function getSingleUser(req: Request, res: Response, next: NextFunction) {
+async function getSingleUserById(req: Request, res: Response, next: NextFunction) {
   if (!validationResult(req).isEmpty()) {
     const error = new ErrorWithStatus(400, "User ID must be a number");
     next(error);
   }
 
   const userId = parseInt(req.params.id);
-  const user = UsersService.getSingleUser(userId);
+  const user = await UsersService.getSingleUserById(userId);
 
   if (!user) {
     const error = new ErrorWithStatus(404, "User not found");
@@ -93,10 +88,14 @@ async function addNewUser(req: Request, res: Response, next: NextFunction) {
   }
   const data = matchedData(req);
 
-  const newUser = await UsersService.addNewUser(data);
-
-  // 201 Created = We created a new resource
-  res.status(201).json(newUser);
+  try {
+    const newUser = await UsersService.addNewUser(data);
+    console.log(newUser);
+    // 201 Created = We created a new resource
+    res.status(201).json(newUser);
+  } catch (error) {
+    next(error);
+  }
 }
 
 /* -------------------------------- Edit user ------------------------------- */
@@ -165,4 +164,14 @@ async function deleteUser(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export default UsersController;
+/* -------------------------------------------------------------------------- */
+/*                                 User orders                                */
+/* -------------------------------------------------------------------------- */
+
+export async function getAllOrdersFromUser(req: Request, res: Response, next: NextFunction) {
+  const userId = parseInt(req.params.id);
+  const orders = await UsersService.getAllOrdersFromUser(userId);
+  res.status(200).json(orders);
+}
+
+export default UserController;
