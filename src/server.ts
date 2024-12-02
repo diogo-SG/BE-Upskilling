@@ -21,6 +21,7 @@ app.use("/api/users", userRouter);
 app.use("/api/orders", orderRouter);
 
 // Quick and dirty test route to create tables if they don't exist
+// THESE ARE NOW CREATED VIA MIGRATION, but leaving this code here for now
 // app.get("/api/createTables", async (req, res) => {
 //   try {
 //     await dbClient.query(
