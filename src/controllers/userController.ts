@@ -13,6 +13,7 @@ const UserController = {
   addNewUser,
   editUser,
   deleteUser,
+  getAllOrdersFromUser,
 };
 
 /* ------------------------------ Get all users ----------------------------- */
@@ -52,7 +53,7 @@ async function getSingleUserById(req: Request, res: Response, next: NextFunction
   }
 
   const userId = parseInt(req.params.id);
-  const user = UsersService.getSingleUserById(userId);
+  const user = await UsersService.getSingleUserById(userId);
 
   if (!user) {
     const error = new ErrorWithStatus(404, "User not found");
@@ -161,6 +162,16 @@ async function deleteUser(req: Request, res: Response, next: NextFunction) {
   } catch (error) {
     next(error);
   }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 User orders                                */
+/* -------------------------------------------------------------------------- */
+
+export async function getAllOrdersFromUser(req: Request, res: Response, next: NextFunction) {
+  const userId = parseInt(req.params.id);
+  const orders = await UsersService.getAllOrdersFromUser(userId);
+  res.status(200).json(orders);
 }
 
 export default UserController;

@@ -1,6 +1,8 @@
 import { OrderSchema } from "../../schemas/order";
 import dbClient from "../config";
 
+// This should all be broken up into more tables and queries, but for the sake of simplicity, we'll keep it as is
+
 /* -------------------------------------------------------------------------- */
 /*                                Order queries                               */
 /* -------------------------------------------------------------------------- */

@@ -50,4 +50,29 @@ async function deleteUser(id: number) {
   return;
 }
 
-export { getAllUsers, getSingleUserById, checkIfUserExistsByEmail, addNewUser, editUser, deleteUser };
+/* -------------------------------------------------------------------------- */
+/*                                 User orders                                */
+/* -------------------------------------------------------------------------- */
+
+async function getAllOrdersFromUser(userId: number) {
+  const query = `SELECT * FROM "order" WHERE user_id = $1`;
+  const { rows } = await dbClient.query(query, [userId]);
+  return rows;
+}
+
+async function getSingleOrderFromUser(userId: number, orderId: number) {
+  const query = `SELECT * FROM "order" WHERE user_id = $1 AND id = $2`;
+  const { rows } = await dbClient.query(query, [userId, orderId]);
+  return rows[0];
+}
+
+export {
+  getAllUsers,
+  getSingleUserById,
+  checkIfUserExistsByEmail,
+  addNewUser,
+  editUser,
+  deleteUser,
+  getAllOrdersFromUser,
+  getSingleOrderFromUser,
+};

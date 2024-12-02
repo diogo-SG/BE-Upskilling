@@ -33,7 +33,7 @@ async function getSingleOrderById(req: Request, res: Response, next: NextFunctio
   }
 
   const orderId = parseInt(req.params.id);
-  const order = OrderService.getSingleOrderById(orderId);
+  const order = await OrderService.getSingleOrderById(orderId);
 
   if (!order) {
     const error = new ErrorWithStatus(404, "Order not found");

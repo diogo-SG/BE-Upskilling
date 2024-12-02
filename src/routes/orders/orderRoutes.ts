@@ -1,7 +1,7 @@
 import express from "express";
 import { checkSchema } from "express-validator";
-import OrderController from "../controllers/orderController";
-import OrderValSchemas from "../validation/orderValidation";
+import OrderController from "../../controllers/orderController";
+import OrderValSchemas from "../../validation/orderValidation";
 
 const { getAllOrders, getSingleOrderById, addNewOrder, editOrder, deleteOrder } = OrderController;
 

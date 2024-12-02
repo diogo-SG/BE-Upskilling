@@ -12,6 +12,7 @@ const UserService = {
   addNewUser,
   editUser,
   deleteUser,
+  getAllOrdersFromUser,
 };
 
 /* ------------------------------ Get all users ----------------------------- */
@@ -93,6 +94,15 @@ async function deleteUser(userId: number) {
   } catch (error) {
     throw new ErrorWithStatus(500, "Something went wrong");
   }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 User orders                                */
+/* -------------------------------------------------------------------------- */
+
+async function getAllOrdersFromUser(userId: number) {
+  const orders = await UserQueries.getAllOrdersFromUser(userId);
+  return orders;
 }
 
 export default UserService;

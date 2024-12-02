@@ -1,12 +1,17 @@
-import UsersController from "../controllers/userController";
-import UserValSchemas from "../validation/userValidation";
+import UsersController from "../../controllers/userController";
+import UserValSchemas from "../../validation/userValidation";
 import { checkSchema } from "express-validator";
 import express from "express";
+import userOrderRouter from "./userOrders/userOrderRoutes";
 
 const { getAllUsers, getSingleUserById, addNewUser, editUser, deleteUser } = UsersController;
 
 const router = express.Router();
+router.use("/:id/orders", userOrderRouter);
 
+/* -------------------------------------------------------------------------- */
+/*                                   Routes                                   */
+/* -------------------------------------------------------------------------- */
 /* -------------------------------- All users ------------------------------- */
 
 router.get("/", checkSchema(UserValSchemas.getAllUsers), getAllUsers);

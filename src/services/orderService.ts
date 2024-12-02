@@ -40,6 +40,7 @@ async function addNewOrder(newOrderData: Partial<OrderSchema>) {
 
   try {
     const addedOrder = await OrderQueries.addNewOrder(newOrderData);
+    console.log("addedOrder", addedOrder);
     return addedOrder;
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
