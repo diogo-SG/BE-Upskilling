@@ -1,43 +1,30 @@
 import UsersController from "../controllers/usersController";
-import { query, param, body, checkSchema } from "express-validator";
+import UserValSchemas from "../validation/userValidation";
+import { checkSchema } from "express-validator";
 import express from "express";
-import { addNewUserValidationSchema, editUserValidationSchema } from "../validation/userValidation";
 
-const { getAllUsers, getSingleUser, addNewUser, editUser, deleteUser } = UsersController;
+const { getAllUsers, getSingleUserById, addNewUser, editUser, deleteUser } = UsersController;
 
 const router = express.Router();
 
-// todo move validation to a separate file
-
 /* -------------------------------- All users ------------------------------- */
-const allUsersValidation = [query("limit").isNumeric().withMessage("Limit must be a number").optional()];
 
-router.get("/", allUsersValidation, getAllUsers);
+router.get("/", checkSchema(UserValSchemas.getAllUsers), getAllUsers);
 
 /* ----------------------------- Single user ------------------------------ */
-const singleUserValidation = [param("id").isNumeric().withMessage("User ID must be a number")];
 
-router.get("/:id", singleUserValidation, getSingleUser);
+router.get("/:id", checkSchema(UserValSchemas.getSingleUserById), getSingleUserById);
 
 /* ------------------------------ Add user ------------------------------- */
 
-router.post("/", checkSchema(addNewUserValidationSchema), addNewUser);
+router.post("/", checkSchema(UserValSchemas.addNewUser), addNewUser);
 
 /* ------------------------------ Edit user ------------------------------ */
-// const editUserValidation = [
-//   param("id").isNumeric().withMessage("User ID must be a number"),
-//   body("name").trim().isString().withMessage("Name must be a string").optional(),
-//   body("email").trim().isEmail().withMessage("Email is invalid").optional(),
-// ];
 
-// Trying out validation schemas too
-
-router.put("/:id", checkSchema(editUserValidationSchema), editUser);
+router.put("/:id", checkSchema(UserValSchemas.editUser), editUser);
 
 /* ------------------------------ Delete user ------------------------------ */
 
-const deleteUserValidation = [param("id").isNumeric().withMessage("User ID must be a number")];
-
-router.delete("/:id", deleteUserValidation, deleteUser);
+router.delete("/:id", checkSchema(UserValSchemas.deleteUser), deleteUser);
 
 export default router;

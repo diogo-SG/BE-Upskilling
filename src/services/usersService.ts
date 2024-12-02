@@ -2,15 +2,13 @@
 /*                                Users Service                               */
 /* -------------------------------------------------------------------------- */
 
-import client from "../database/config";
 import * as UserQueries from "../database/queries/userQueries";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import { mockUsers } from "../mock-data/users";
 import { UserSchema } from "../schemas/users";
 
 const UsersService = {
   getAllUsers,
-  getSingleUser,
+  getSingleUserById,
   addNewUser,
   editUser,
   deleteUser,
@@ -19,13 +17,13 @@ const UsersService = {
 /* ------------------------------ Get all users ----------------------------- */
 
 async function getAllUsers(limit?: number) {
-  const slicedUsers = mockUsers.slice(0, limit);
-  return slicedUsers;
+  const users = await UserQueries.getAllUsers(limit);
+  return users;
 }
 
 /* ----------------------------- Get single user ---------------------------- */
-async function getSingleUser(userId: number) {
-  const user = findUser(userId);
+async function getSingleUserById(userId: number) {
+  const user = await UserQueries.getSingleUserById(userId);
   if (!user) {
     throw new ErrorWithStatus(404, "User not found");
   }
@@ -41,43 +39,37 @@ async function addNewUser(newUserData: Partial<UserSchema>) {
     throw new ErrorWithStatus(400, "Name, email, username and password are required");
   }
 
-  // todo fix issues with error handling
-  client.query(UserQueries.checkIfUserExistsByEmail, [email], (error, result) => {
-    if (error) {
-      throw new ErrorWithStatus(500, "Something went wrong");
-    }
-
-    if (result.rows.length > 0) {
+  try {
+    const emailCheckRes = await UserQueries.checkIfUserExistsByEmail(email);
+    if (emailCheckRes) {
       throw new ErrorWithStatus(400, "User with this email already exists");
     }
-  });
 
-  client.query(UserQueries.addNewUser, [name, email, password, username], (error, result) => {
-    if (error) {
-      throw new ErrorWithStatus(500, "Something went wrong");
+    const addedUser = await UserQueries.addNewUser(name, email, password, username);
+    return addedUser;
+  } catch (error) {
+    if (error instanceof ErrorWithStatus) {
+      throw error;
     }
-    console.log(result.rows[0]);
-    return result.rows[0];
-  });
+
+    throw new ErrorWithStatus(500, "Something went wrong");
+  }
 }
 
 /* -------------------------------- Edit user ------------------------------- */
 
 async function editUser(userId: number, userData: Partial<UserSchema>) {
-  let user = findUser(userId);
+  let user = await UserQueries.getSingleUserById(userId);
   if (!user) {
     throw new ErrorWithStatus(404, "User not found");
   }
 
   try {
-    user = {
-      ...user,
-      ...userData,
-      id: userId,
-    };
-
-    return user;
+    // todo make email primary key, check if email is already taken
+    const updatedUser = await UserQueries.editUser(userId, userData);
+    return updatedUser;
   } catch (error) {
+    console.log(error);
     throw new ErrorWithStatus(500, "Something went wrong!");
   }
 }
@@ -85,26 +77,16 @@ async function editUser(userId: number, userData: Partial<UserSchema>) {
 /* ----------------------------- Delete user ------------------------------ */
 
 async function deleteUser(userId: number) {
-  const userIndex = mockUsers.findIndex((user) => user.id === userId);
+  try {
+    const user = await UserQueries.getSingleUserById(userId);
+    if (!user) {
+      throw new ErrorWithStatus(404, "User not found");
+    }
 
-  if (userIndex === -1) {
-    throw new ErrorWithStatus(404, "User not found");
+    await UserQueries.deleteUser(userId);
+  } catch (error) {
+    throw new ErrorWithStatus(500, "Something went wrong");
   }
-
-  const deletedUser = mockUsers.splice(userIndex, 1)[0];
-  return deletedUser;
 }
 
 export default UsersService;
-
-/* -------------------------------------------------------------------------- */
-/*                                   Helpers                                  */
-/* -------------------------------------------------------------------------- */
-
-function findUser(userId: number) {
-  const user = mockUsers.find((user) => user.id === userId);
-  if (!user) {
-    return null;
-  }
-  return user;
-}

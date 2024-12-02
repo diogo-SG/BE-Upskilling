@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { mockUsers } from "../mock-data/users";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import UsersService from "../services/usersService";
 import { matchedData, validationResult } from "express-validator";
@@ -10,7 +9,7 @@ import { matchedData, validationResult } from "express-validator";
 
 const UsersController = {
   getAllUsers,
-  getSingleUser,
+  getSingleUserById,
   addNewUser,
   editUser,
   deleteUser,
@@ -33,11 +32,6 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
 
   const data = matchedData(req);
 
-  if (typeof data.limit === "undefined") {
-    res.status(200).json(mockUsers);
-    return;
-  }
-
   const limit = parseInt(data.limit as string);
   const fetchedUsers = await UsersService.getAllUsers(limit);
 
@@ -51,14 +45,14 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - GET /api/users/1
  */
-async function getSingleUser(req: Request, res: Response, next: NextFunction) {
+async function getSingleUserById(req: Request, res: Response, next: NextFunction) {
   if (!validationResult(req).isEmpty()) {
     const error = new ErrorWithStatus(400, "User ID must be a number");
     next(error);
   }
 
   const userId = parseInt(req.params.id);
-  const user = UsersService.getSingleUser(userId);
+  const user = UsersService.getSingleUserById(userId);
 
   if (!user) {
     const error = new ErrorWithStatus(404, "User not found");

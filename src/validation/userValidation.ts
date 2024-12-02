@@ -1,6 +1,25 @@
 import { Schema } from "express-validator";
 
-export const addNewUserValidationSchema: Schema = {
+const getAllUsers: Schema = {
+  limit: {
+    in: ["query"],
+    isNumeric: {
+      errorMessage: "Limit must be a number",
+    },
+    optional: true,
+  },
+};
+
+const getSingleUserById: Schema = {
+  id: {
+    in: ["params"],
+    isNumeric: {
+      errorMessage: "User ID must be a number",
+    },
+  },
+};
+
+const addNewUser: Schema = {
   name: {
     in: ["body"],
     isString: {
@@ -27,7 +46,7 @@ export const addNewUserValidationSchema: Schema = {
   },
 };
 
-export const editUserValidationSchema: Schema = {
+export const editUser: Schema = {
   id: {
     in: ["params"],
     exists: true,
@@ -49,4 +68,37 @@ export const editUserValidationSchema: Schema = {
       errorMessage: "Email is invalid",
     },
   },
+  password: {
+    in: ["body"],
+    optional: true,
+    isString: {
+      errorMessage: "Password must be a string",
+    },
+  },
+  username: {
+    in: ["body"],
+    optional: true,
+    isString: {
+      errorMessage: "Username must be a string",
+    },
+  },
 };
+
+const deleteUser: Schema = {
+  id: {
+    in: ["params"],
+    isNumeric: {
+      errorMessage: "User ID must be a number",
+    },
+  },
+};
+
+const UserValSchemas = {
+  getSingleUserById,
+  getAllUsers,
+  addNewUser,
+  editUser,
+  deleteUser,
+};
+
+export default UserValSchemas;
