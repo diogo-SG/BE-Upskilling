@@ -1,4 +1,4 @@
-import UsersController from "../controllers/usersController";
+import UsersController from "../controllers/userController";
 import UserValSchemas from "../validation/userValidation";
 import { checkSchema } from "express-validator";
 import express from "express";

@@ -1,12 +1,12 @@
+import * as UserQueries from "../database/queries/userQueries";
+import { ErrorWithStatus } from "../middleware/errorHandler";
+import { UserSchema } from "../schemas/user";
+
 /* -------------------------------------------------------------------------- */
 /*                                Users Service                               */
 /* -------------------------------------------------------------------------- */
 
-import * as UserQueries from "../database/queries/userQueries";
-import { ErrorWithStatus } from "../middleware/errorHandler";
-import { UserSchema } from "../schemas/users";
-
-const UsersService = {
+const UserService = {
   getAllUsers,
   getSingleUserById,
   addNewUser,
@@ -64,8 +64,14 @@ async function editUser(userId: number, userData: Partial<UserSchema>) {
     throw new ErrorWithStatus(404, "User not found");
   }
 
+  if (userData.email) {
+    let userWithSameEmail = await UserQueries.checkIfUserExistsByEmail(userData.email);
+    if (userWithSameEmail && userWithSameEmail.id !== userId) {
+      throw new ErrorWithStatus(400, "User with this email already exists");
+    }
+  }
+
   try {
-    // todo make email primary key, check if email is already taken
     const updatedUser = await UserQueries.editUser(userId, userData);
     return updatedUser;
   } catch (error) {
@@ -89,4 +95,4 @@ async function deleteUser(userId: number) {
   }
 }
 
-export default UsersService;
+export default UserService;

@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import UsersService from "../services/usersService";
+import UsersService from "../services/userService";
 import { matchedData, validationResult } from "express-validator";
 
 /* -------------------------------------------------------------------------- */
 /*                               User Controller                              */
 /* -------------------------------------------------------------------------- */
 
-const UsersController = {
+const UserController = {
   getAllUsers,
   getSingleUserById,
   addNewUser,
@@ -163,4 +163,4 @@ async function deleteUser(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export default UsersController;
+export default UserController;
