@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import { CreateUsersTable1734540142082 } from "./migrations/1734540142082-CreateUsersTable";
 import User from "./entities/user";
+import Order from "./entities/order";
 
 const port = process.env.DB_PORT || "5433";
 
@@ -12,7 +13,7 @@ const dataSource = new DataSource({
   database: process.env.DB_NAME || "postgres",
   port: parseInt(port),
   migrations: [CreateUsersTable1734540142082],
-  entities: [User],
+  entities: [User, Order],
 });
 
 export default dataSource;
