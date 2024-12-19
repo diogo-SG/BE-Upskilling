@@ -1,10 +1,10 @@
 import express from "express";
-import userRouter from "./routes/users/userRoutes";
-import orderRouter from "./routes/orders/orderRoutes";
+// import userRouter from "./routes/users/userRoutes";
+// import orderRouter from "./routes/orders/orderRoutes";
 import logger from "./middleware/logger";
 import errorHandler from "./middleware/errorHandler";
 import catchAllError from "./middleware/catchAllError";
-import dbClient from "./database/config";
+import dataSource from "./database/dataSource";
 
 const PORT = process.env.PORT || 8080;
 
@@ -17,25 +17,8 @@ app.use(express.urlencoded({ extended: false }));
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
-app.use("/api/users", userRouter);
-app.use("/api/orders", orderRouter);
-
-// Quick and dirty test route to create tables if they don't exist
-// THESE ARE NOW CREATED VIA MIGRATION, but leaving this code here for now
-// app.get("/api/createTables", async (req, res) => {
-//   try {
-//     await dbClient.query(
-//       `CREATE TABLE "user" (id SERIAL PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), password VARCHAR(255), username VARCHAR(255))`
-//     );
-//     await dbClient.query(
-//       `CREATE TABLE "order" (id SERIAL PRIMARY KEY, user_id INTEGER, product_id INTEGER, quantity INTEGER)`
-//     );
-//     res.send("Tables created");
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send("Something went wrong");
-//   }
-// });
+// app.use("/api/users", userRouter);
+// app.use("/api/orders", orderRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello world!");
@@ -52,7 +35,18 @@ app.use(logger);
 app.use(catchAllError);
 app.use(errorHandler);
 
-/* ------------------------------ Start server ------------------------------ */
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
+/* -------------------------------------------------------------------------- */
+/*                       Start db connection and server                       */
+/* -------------------------------------------------------------------------- */
+
+dataSource
+  .initialize()
+  .then(() => {
+    console.log("Database connection established");
+    app.listen(PORT, () => {
+      console.log(`Server is running on port: ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Error connecting to the database: ", error);
+  });
