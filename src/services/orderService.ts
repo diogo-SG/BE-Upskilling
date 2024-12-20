@@ -1,81 +1,83 @@
-// import * as OrderQueries from "../database/queries/orderQueries";
-// import { ErrorWithStatus } from "../middleware/errorHandler";
-// import { OrderSchema } from "../schemas/order";
+import OrderRepository from "../database/repositories/OrderRepository";
+import { ErrorWithStatus } from "../middleware/errorHandler";
+import { OrderSchema } from "../database/types/order";
+import dataSource from "../database/dataSource";
 
-// /* -------------------------------------------------------------------------- */
-// /*                                Order Service                               */
-// /* -------------------------------------------------------------------------- */
+const OrderQueries = new OrderRepository(dataSource);
+/* -------------------------------------------------------------------------- */
+/*                                Order Service                               */
+/* -------------------------------------------------------------------------- */
 
-// const OrderService = {
-//   getAllOrders,
-//   getSingleOrderById,
-//   addNewOrder,
-//   editOrder,
-//   deleteOrder,
-// };
+const OrderService = {
+  getAll,
+  getById,
+  addNew,
+  edit,
+  remove,
+};
 
-// /* ------------------------------ Get all orders ----------------------------- */
-// async function getAllOrders(limit?: number) {
-//   const orders = await OrderQueries.getAllOrders(limit);
-//   return orders;
-// }
+/* ------------------------------ Get all orders ----------------------------- */
+async function getAll(limit?: number) {
+  const orders = await OrderQueries.findAll(limit);
+  return orders;
+}
 
-// /* ----------------------------- Get single order ---------------------------- */
+/* ----------------------------- Get single order ---------------------------- */
 
-// async function getSingleOrderById(orderId: number) {
-//   const order = await OrderQueries.getSingleOrderById(orderId);
-//   if (!order) {
-//     throw new ErrorWithStatus(404, "Order not found");
-//   }
-//   return order;
-// }
+async function getById(orderId: number) {
+  const order = await OrderQueries.findOneById(orderId);
+  if (!order) {
+    throw new ErrorWithStatus(404, "Order not found");
+  }
+  return order;
+}
 
-// /* ------------------------------ Add new order ------------------------------ */
-// async function addNewOrder(newOrderData: Partial<OrderSchema>) {
-//   const { user_id, product_id, quantity } = newOrderData;
+/* ------------------------------ Add new order ------------------------------ */
+async function addNew(newOrderData: Partial<OrderSchema>) {
+  const { user_id, product_id, quantity } = newOrderData;
 
-//   if (!user_id || !product_id || !quantity) {
-//     throw new ErrorWithStatus(400, "User ID, product ID and quantity are required");
-//   }
+  if (!user_id || !product_id || !quantity) {
+    throw new ErrorWithStatus(400, "User ID, product ID and quantity are required");
+  }
 
-//   try {
-//     const addedOrder = await OrderQueries.addNewOrder(newOrderData);
-//     console.log("addedOrder", addedOrder);
-//     return addedOrder;
-//   } catch (error) {
-//     if (error instanceof ErrorWithStatus) {
-//       throw error;
-//     }
+  try {
+    const addedOrder = await OrderQueries.create(newOrderData);
+    console.log("addedOrder", addedOrder);
+    return addedOrder;
+  } catch (error) {
+    if (error instanceof ErrorWithStatus) {
+      throw error;
+    }
 
-//     throw new ErrorWithStatus(500, "Something went wrong");
-//   }
-// }
+    throw new ErrorWithStatus(500, "Something went wrong");
+  }
+}
 
-// /* ------------------------------- Edit order ------------------------------- */
-// async function editOrder(orderId: number, newOrderData: Partial<OrderSchema>) {
-//   const { user_id, product_id, quantity } = newOrderData;
+/* ------------------------------- Edit order ------------------------------- */
+async function edit(newOrderData: OrderSchema) {
+  const { id, user_id, product_id, quantity } = newOrderData;
 
-//   if (!user_id || !product_id || !quantity) {
-//     throw new ErrorWithStatus(400, "User ID, product ID and quantity are required");
-//   }
+  if (!user_id || !product_id || !quantity) {
+    throw new ErrorWithStatus(400, "User ID, product ID and quantity are required");
+  }
 
-//   try {
-//     const editedOrder = await OrderQueries.editOrder(orderId, newOrderData);
-//     return editedOrder;
-//   } catch (error) {
-//     if (error instanceof ErrorWithStatus) {
-//       throw error;
-//     }
+  try {
+    const editedOrder = await OrderQueries.update(newOrderData);
+    return editedOrder;
+  } catch (error) {
+    if (error instanceof ErrorWithStatus) {
+      throw error;
+    }
 
-//     throw new ErrorWithStatus(500, "Something went wrong");
-//   }
-// }
+    throw new ErrorWithStatus(500, "Something went wrong");
+  }
+}
 
-// /* ----------------------------- Delete order ------------------------------ */
-// async function deleteOrder(orderId: number) {
-//   await OrderQueries.deleteOrder(orderId);
+/* ----------------------------- Delete order ------------------------------ */
+async function remove(orderId: number) {
+  await OrderQueries.delete(orderId);
 
-//   return;
-// }
+  return;
+}
 
-// export default OrderService;
+export default OrderService;

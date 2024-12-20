@@ -9,12 +9,25 @@ class OrderRepository {
     this.dataSource = dataSource;
   }
 
-  async create(order: OrderSchema): Promise<OrderSchema> {
+  async create(order: Partial<OrderSchema>): Promise<OrderSchema> {
     const newOrder = await this.dataSource.getRepository(Order).save(order);
     return newOrder;
   }
 
-  async findById(id: number): Promise<OrderSchema | null> {
+  async findAll(limit?: number): Promise<OrderSchema[]> {
+    const orders = await this.dataSource.getRepository(Order).find({
+      take: limit,
+    });
+    return orders;
+  }
+
+  async findAllByUserId(userId: number): Promise<OrderSchema[]> {
+    const orders = await this.dataSource.getRepository(Order).find({
+      where: { user_id: userId },
+    });
+    return orders;
+  }
+  async findOneById(id: number): Promise<OrderSchema | null> {
     const order = await this.dataSource.getRepository(Order).findOneBy({ id });
     return order;
   }

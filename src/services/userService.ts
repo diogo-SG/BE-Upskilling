@@ -1,108 +1,118 @@
-// import * as UserQueries from "../database/queries/userQueries";
-// import { ErrorWithStatus } from "../middleware/errorHandler";
-// import { UserSchema } from "../schemas/user";
+import UserRepository from "../database/repositories/UserRepository";
+import { ErrorWithStatus } from "../middleware/errorHandler";
+import { UserSchema } from "../database/types/user";
+import dataSource from "../database/dataSource";
+import OrderRepository from "../database/repositories/OrderRepository";
 
-// /* -------------------------------------------------------------------------- */
-// /*                                Users Service                               */
-// /* -------------------------------------------------------------------------- */
+const UserQueries = new UserRepository(dataSource);
+const OrderQueries = new OrderRepository(dataSource);
 
-// const UserService = {
-//   getAllUsers,
-//   getSingleUserById,
-//   addNewUser,
-//   editUser,
-//   deleteUser,
-//   getAllOrdersFromUser,
-// };
+// todo move validation logic to controller
+/* -------------------------------------------------------------------------- */
+/*                                Users Service                               */
+/* -------------------------------------------------------------------------- */
 
-// /* ------------------------------ Get all users ----------------------------- */
+const UserService = {
+  getAll,
+  getOneById,
+  addNew,
+  edit,
+  remove,
+  getAllOrders,
+};
 
-// async function getAllUsers(limit?: number) {
-//   const users = await UserQueries.getAllUsers(limit);
-//   return users;
-// }
+/* ------------------------------ Get all users ----------------------------- */
 
-// /* ----------------------------- Get single user ---------------------------- */
-// async function getSingleUserById(userId: number) {
-//   const user = await UserQueries.getSingleUserById(userId);
-//   if (!user) {
-//     throw new ErrorWithStatus(404, "User not found");
-//   }
-//   return user;
-// }
+async function getAll(limit?: number) {
+  const users = await UserQueries.findAll(limit);
+  return users;
+}
 
-// /* ------------------------------ Add new user ------------------------------ */
+/* ----------------------------- Get single user ---------------------------- */
+async function getOneById(userId: number) {
+  const user = await UserQueries.findOneById(userId);
+  if (!user) {
+    throw new ErrorWithStatus(404, "User not found");
+  }
+  return user;
+}
 
-// async function addNewUser(newUserData: Partial<UserSchema>) {
-//   const { name, email, password, username } = newUserData;
+/* ------------------------------ Add new user ------------------------------ */
 
-//   if (!name || !email || !password || !username) {
-//     throw new ErrorWithStatus(400, "Name, email, username and password are required");
-//   }
+async function addNew(newUserData: Partial<UserSchema>) {
+  const { name, email, password, username } = newUserData;
 
-//   try {
-//     const emailCheckRes = await UserQueries.checkIfUserExistsByEmail(email);
-//     if (emailCheckRes) {
-//       throw new ErrorWithStatus(400, "User with this email already exists");
-//     }
+  if (!name || !email || !password || !username) {
+    throw new ErrorWithStatus(400, "Name, email, username and password are required");
+  }
 
-//     const addedUser = await UserQueries.addNewUser(name, email, password, username);
-//     return addedUser;
-//   } catch (error) {
-//     if (error instanceof ErrorWithStatus) {
-//       throw error;
-//     }
+  try {
+    const emailCheckRes = await UserQueries.findOneByEmail(email);
+    if (emailCheckRes) {
+      throw new ErrorWithStatus(400, "User with this email already exists");
+    }
 
-//     throw new ErrorWithStatus(500, "Something went wrong");
-//   }
-// }
+    const addedUser = await UserQueries.create({ name, email, password, username });
+    return addedUser;
+  } catch (error) {
+    if (error instanceof ErrorWithStatus) {
+      throw error;
+    }
 
-// /* -------------------------------- Edit user ------------------------------- */
+    throw new ErrorWithStatus(500, "Something went wrong");
+  }
+}
 
-// async function editUser(userId: number, userData: Partial<UserSchema>) {
-//   let user = await UserQueries.getSingleUserById(userId);
-//   if (!user) {
-//     throw new ErrorWithStatus(404, "User not found");
-//   }
+/* -------------------------------- Edit user ------------------------------- */
 
-//   if (userData.email) {
-//     let userWithSameEmail = await UserQueries.checkIfUserExistsByEmail(userData.email);
-//     if (userWithSameEmail && userWithSameEmail.id !== userId) {
-//       throw new ErrorWithStatus(400, "User with this email already exists");
-//     }
-//   }
+async function edit(userData: UserSchema) {
+  // todo: do this validation in controller instead
+  try {
+    //     if (!userData.id) {
+    //       throw new ErrorWithStatus(400, "User ID is required");
+    //     }
+    //     let user = await UserQueries.findOneById(userData.id);
+    //     if (!user) {
+    //       throw new ErrorWithStatus(404, "User not found");
+    //     }
 
-//   try {
-//     const updatedUser = await UserQueries.editUser(userId, userData);
-//     return updatedUser;
-//   } catch (error) {
-//     console.log(error);
-//     throw new ErrorWithStatus(500, "Something went wrong!");
-//   }
-// }
+    //     if (userData.email) {
+    //       let userWithSameEmail = await UserQueries.findOneByEmail(userData.email);
+    //       if (userWithSameEmail && userWithSameEmail.id !== userData.id) {
+    //         throw new ErrorWithStatus(400, "User with this email already exists");
+    //       }
+    //     }
 
-// /* ----------------------------- Delete user ------------------------------ */
+    const updatedUser = await UserQueries.update(userData);
+    return updatedUser;
+  } catch (error) {
+    console.log(error);
+    throw new ErrorWithStatus(500, "Something went wrong!");
+  }
+}
 
-// async function deleteUser(userId: number) {
-//   try {
-//     const user = await UserQueries.getSingleUserById(userId);
-//     if (!user) {
-//       throw new ErrorWithStatus(404, "User not found");
-//     }
+/* ----------------------------- Delete user ------------------------------ */
 
-//     await UserQueries.deleteUser(userId);
-//   } catch (error) {
-//     throw new ErrorWithStatus(500, "Something went wrong");
-//   }
-// }
+async function remove(userId: number) {
+  try {
+    const user = await UserQueries.findOneById(userId);
+    if (!user) {
+      throw new ErrorWithStatus(404, "User not found");
+    }
 
-// /* -------------------------------------------------------------------------- */
-// /*                                 User orders                                */
-// /* -------------------------------------------------------------------------- */
+    await UserQueries.delete(userId);
+  } catch (error) {
+    throw new ErrorWithStatus(500, "Something went wrong");
+  }
+}
 
-// async function getAllOrdersFromUser(userId: number) {
-//   const orders = await UserQueries.getAllOrdersFromUser(userId);
-//   return orders;
-// }
+/* -------------------------------------------------------------------------- */
+/*                                 User orders                                */
+/* -------------------------------------------------------------------------- */
 
-// export default UserService;
+async function getAllOrders(userId: number) {
+  const orders = await OrderQueries.findAllByUserId(userId);
+  return orders;
+}
+
+export default UserService;

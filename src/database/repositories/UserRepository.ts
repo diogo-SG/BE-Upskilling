@@ -9,17 +9,24 @@ class UserRepository {
     this.dataSource = dataSource;
   }
 
-  async create(user: UserSchema): Promise<UserSchema> {
+  async create(user: Partial<UserSchema>): Promise<UserSchema> {
     const newUser = await this.dataSource.getRepository(User).save(user);
     return newUser;
   }
 
-  async findByEmail(email: string): Promise<UserSchema | null> {
+  async findAll(limit?: number): Promise<UserSchema[]> {
+    const users = await this.dataSource.getRepository(User).find({
+      take: limit,
+    });
+    return users;
+  }
+
+  async findOneByEmail(email: string): Promise<UserSchema | null> {
     const user = await this.dataSource.getRepository(User).findOne({ where: { email } });
     return user;
   }
 
-  async findById(id: number): Promise<UserSchema | null> {
+  async findOneById(id: number): Promise<UserSchema | null> {
     const user = await this.dataSource.getRepository(User).findOneBy({ id });
     return user;
   }
