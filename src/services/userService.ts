@@ -1,8 +1,8 @@
 import UserRepository from "../database/repositories/Users/UserRepository";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import OrderRepository from "../database/repositories/Orders/OrderRepository";
-import UserEntity from "../database/entities/users/user";
-import { EntitySansId } from "../database/types/types";
+import UserEntity from "../database/entities/users/UserEntity";
+import { EntityNoMetadata } from "../database/types/types";
 
 /* -------------------------------------------------------------------------- */
 /*                                Users Service                               */
@@ -37,7 +37,7 @@ async function getOneById(userId: number) {
 
 /* ------------------------------ Add new user ------------------------------ */
 
-async function addNew(newUserData: EntitySansId<UserEntity>) {
+async function addNew(newUserData: EntityNoMetadata<UserEntity>) {
   const { name, email, password, username } = newUserData;
 
   try {

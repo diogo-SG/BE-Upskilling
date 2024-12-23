@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import ProductService from "../services/ProductService";
 import { matchedData, validationResult } from "express-validator";
-import { EntitySansId } from "../database/types/types";
-import ProductEntity from "../database/entities/products/product";
+import { EntityNoMetadata } from "../database/types/types";
+import ProductEntity from "../database/entities/products/ProductEntity";
 
 /* -------------------------------------------------------------------------- */
 /*                              Product controller                              */
@@ -53,7 +53,7 @@ async function addNew(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 
-  const data = matchedData(req) as EntitySansId<ProductEntity>;
+  const data = matchedData(req) as EntityNoMetadata<ProductEntity>;
 
   const newProduct = await ProductService.addNew(data);
   res.status(201).json(newProduct);

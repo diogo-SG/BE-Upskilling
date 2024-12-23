@@ -1,4 +1,4 @@
-import UserEntity from "../../entities/users/user";
+import UserEntity from "../../entities/users/UserEntity";
 import BaseRepository from "../BaseRepository";
 
 class UserRepository extends BaseRepository<UserEntity> {

@@ -1,6 +1,6 @@
 import { DataSource, DeepPartial, EntityTarget, FindOptionsWhere, Repository } from "typeorm";
-import BaseEntity from "../entities/baseEntity";
 import dataSource from "../dataSource";
+import BaseEntity from "../entities/BaseEntity";
 
 abstract class BaseRepository<T extends BaseEntity> {
   private dataSource: DataSource;
@@ -30,7 +30,7 @@ abstract class BaseRepository<T extends BaseEntity> {
     return entry;
   }
 
-  async update(data: T): Promise<T> {
+  async update(data: DeepPartial<T>): Promise<T> {
     const updatedEntry = await this.repository.save(data);
     return updatedEntry;
   }

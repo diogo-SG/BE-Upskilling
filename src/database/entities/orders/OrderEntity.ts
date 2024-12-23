@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import User from "../users/user";
-import OrderLineEntity from "./order-line";
-import BaseEntity from "../baseEntity";
+import User from "../users/UserEntity";
+import OrderLineEntity from "./OrderLineEntity";
+import BaseEntity from "../BaseEntity";
 
 @Entity("orders")
 class OrderEntity extends BaseEntity {
@@ -12,7 +12,7 @@ class OrderEntity extends BaseEntity {
   status!: string;
 
   @OneToMany(() => OrderLineEntity, (orderLine) => orderLine.order_id)
-  order_lines!: OrderLineEntity[];
+  order_lines?: number[];
 }
 
 export default OrderEntity;

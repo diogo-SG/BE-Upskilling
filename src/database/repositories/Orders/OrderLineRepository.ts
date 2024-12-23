@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import OrderLineEntity from "../../entities/orders/order-line";
+import OrderLineEntity from "../../entities/orders/OrderLineEntity";
 import BaseRepository from "../BaseRepository";
 
 export class OrderLineRepository extends BaseRepository<OrderLineEntity> {

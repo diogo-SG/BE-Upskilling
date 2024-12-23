@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToOne } from "typeorm";
-import ProductEntity from "../products/product";
-import OrderEntity from "./order";
-import BaseEntity from "../baseEntity";
+import ProductEntity from "../products/ProductEntity";
+import OrderEntity from "./OrderEntity";
+import BaseEntity from "../BaseEntity";
 
 @Entity("order_lines")
 class OrderLineEntity extends BaseEntity {

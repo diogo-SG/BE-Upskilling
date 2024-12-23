@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import ProductEntity from "../../entities/products/product";
+import ProductEntity from "../../entities/products/ProductEntity";
 import BaseRepository from "../BaseRepository";
 
 class ProductRepository extends BaseRepository<ProductEntity> {

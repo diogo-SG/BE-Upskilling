@@ -1,9 +1,9 @@
 import { DataSource } from "typeorm";
 import { CreateUsersTable1734540142082 } from "./migrations/1734540142082-CreateUsersTable";
-import UserEntity from "./entities/users/user";
-import OrderEntity from "./entities/orders/order";
-import OrderLineEntity from "./entities/orders/order-line";
-import ProductEntity from "./entities/products/product";
+import UserEntity from "./entities/users/UserEntity";
+import OrderEntity from "./entities/orders/OrderEntity";
+import OrderLineEntity from "./entities/orders/OrderLineEntity";
+import ProductEntity from "./entities/products/ProductEntity";
 
 const port = process.env.DB_PORT || "5433";
 

@@ -1,6 +1,6 @@
-import ProductEntity from "../database/entities/products/product";
+import ProductEntity from "../database/entities/products/ProductEntity";
 import ProductRepository from "../database/repositories/Products/ProductRepository";
-import { EntitySansId } from "../database/types/types";
+import { EntityNoMetadata } from "../database/types/types";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 
 const ProductRepo = new ProductRepository();
@@ -31,7 +31,7 @@ async function getById(productId: number) {
 }
 
 /* ------------------------------ Add new product ------------------------------ */
-async function addNew(newProductData: EntitySansId<ProductEntity>) {
+async function addNew(newProductData: EntityNoMetadata<ProductEntity>) {
   try {
     const addedProduct = await ProductRepo.create(newProductData);
 

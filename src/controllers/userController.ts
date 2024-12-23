@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import UsersService from "../services/UserService";
 import { matchedData, validationResult } from "express-validator";
-import UserEntity from "../database/entities/users/user";
+import UserEntity from "../database/entities/users/UserEntity";
 import { EntitySansId } from "../database/types/types";
 
 /* -------------------------------------------------------------------------- */

@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import OrderService from "../services/OrderService";
 import { matchedData, validationResult } from "express-validator";
-import { EntitySansId } from "../database/types/types";
-import OrderEntity from "../database/entities/orders/order";
+import { EntityNoMetadata } from "../database/types/types";
+import OrderEntity from "../database/entities/orders/OrderEntity";
 
 /* -------------------------------------------------------------------------- */
 /*                              Order controller                              */
@@ -53,7 +53,7 @@ async function addNew(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 
-  const data = matchedData(req) as EntitySansId<OrderEntity>;
+  const data = matchedData(req) as EntityNoMetadata<OrderEntity>;
 
   const newOrder = await OrderService.addNew(data);
   res.status(201).json(newOrder);
@@ -67,9 +67,9 @@ async function edit(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 
-  const orderId = parseInt(req.params.id);
-  const data = matchedData(req) as OrderEntity;
+  const data = matchedData(req) as EntityNoMetadata<OrderEntity>;
 
+  // todo fix
   const editedOrder = await OrderService.edit(data);
   res.status(200).json(editedOrder);
 }

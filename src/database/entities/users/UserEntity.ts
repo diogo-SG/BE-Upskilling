@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, Unique } from "typeorm";
-import Order from "../orders/order";
-import BaseEntity from "../baseEntity";
-import OrderEntity from "../orders/order";
+import Order from "../orders/OrderEntity";
+import BaseEntity from "../BaseEntity";
+import OrderEntity from "../orders/OrderEntity";
 
 @Entity("users")
 @Unique(["name", "email"])

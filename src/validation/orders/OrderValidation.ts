@@ -7,17 +7,21 @@ const addNew: Schema = {
       errorMessage: "User ID must be a number",
     },
   },
-  product_id: {
+  order_lines: {
     in: ["body"],
-    isNumeric: {
-      errorMessage: "Product ID must be a number",
+    isArray: {
+      errorMessage: "Order lines must be an array",
+    },
+    notEmpty: {
+      errorMessage: "Order lines must not be empty",
     },
   },
-  quantity: {
+  status: {
     in: ["body"],
-    isNumeric: {
-      errorMessage: "Quantity must be a number",
+    isString: {
+      errorMessage: "Status must be a string",
     },
+    optional: true,
   },
 };
 
@@ -36,18 +40,21 @@ export const edit: Schema = {
       errorMessage: "User ID must be a number",
     },
   },
-  product_id: {
+  status: {
     in: ["body"],
     optional: true,
-    isNumeric: {
-      errorMessage: "Product ID must be a number",
+    isString: {
+      errorMessage: "Status must be a string",
     },
   },
-  quantity: {
+  order_lines: {
     in: ["body"],
     optional: true,
-    isNumeric: {
-      errorMessage: "Quantity must be a number",
+    isArray: {
+      errorMessage: "Order lines must be an array",
+    },
+    notEmpty: {
+      errorMessage: "Order lines must not be empty",
     },
   },
 };
