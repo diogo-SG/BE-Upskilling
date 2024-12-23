@@ -1,4 +1,4 @@
-import OrderRepository from "../database/repositories/OrderRepository";
+import OrderRepository from "../database/repositories/Orders/OrderRepository";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import { OrderSchema } from "../database/types/order";
 import dataSource from "../database/dataSource";

@@ -1,8 +1,8 @@
-import UserRepository from "../database/repositories/UserRepository";
+import UserRepository from "../database/repositories/Users/UserRepository";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import { UserSchema } from "../database/types/user";
 import dataSource from "../database/dataSource";
-import OrderRepository from "../database/repositories/OrderRepository";
+import OrderRepository from "../database/repositories/Orders/OrderRepository";
 
 const UserQueries = new UserRepository(dataSource);
 const OrderQueries = new OrderRepository(dataSource);
