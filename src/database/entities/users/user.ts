@@ -19,7 +19,7 @@ class UserEntity extends BaseEntity {
   username!: string;
 
   @OneToMany(() => Order, (order) => order.user_id)
-  orders!: OrderEntity[];
+  orders?: OrderEntity[];
 }
 
 export default UserEntity;

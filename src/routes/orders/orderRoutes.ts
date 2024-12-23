@@ -1,7 +1,7 @@
 import express from "express";
 import { checkSchema } from "express-validator";
 import OrderController from "../../controllers/OrderController";
-import OrderValSchemas from "../../validation/orders/OrderValidation";
+import OrderValidation from "../../validation/orders/OrderValidation";
 import GenericValidation from "../../validation/GenericValidation";
 
 const router = express.Router();
@@ -15,14 +15,14 @@ router.get("/:id", checkSchema(GenericValidation.getSingleById), OrderController
 
 /* ------------------------------ Add order ------------------------------ */
 
-router.post("/", checkSchema(OrderValSchemas.addNewOrder), OrderController.addNew);
+router.post("/", checkSchema(OrderValidation.addNew), OrderController.addNew);
 
 /* ------------------------------ Edit order ----------------------------- */
 
-router.put("/:id", checkSchema(OrderValSchemas.editOrder), OrderController.edit);
+router.put("/:id", checkSchema(OrderValidation.edit), OrderController.edit);
 
 /* ----------------------------- Delete order ---------------------------- */
 
-router.delete("/:id", checkSchema(OrderValSchemas.deleteOrder), OrderController.remove);
+router.delete("/:id", checkSchema(GenericValidation.remove), OrderController.remove);
 
 export default router;

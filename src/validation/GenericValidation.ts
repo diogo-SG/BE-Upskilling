@@ -19,9 +19,19 @@ const getSingleById: Schema = {
   },
 };
 
+const remove: Schema = {
+  id: {
+    in: ["params"],
+    isNumeric: {
+      errorMessage: "ID must be a number",
+    },
+  },
+};
+
 const GenericValidation = {
   getAll,
   getSingleById,
+  remove,
 };
 
 export default GenericValidation;

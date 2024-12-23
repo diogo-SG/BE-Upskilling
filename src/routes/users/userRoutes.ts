@@ -1,12 +1,12 @@
+import express from "express";
 import UserController from "../../controllers/UserController";
-import UserValSchemas from "../../validation/users/UserValidation";
+import UserValidation from "../../validation/users/UserValidation";
 import GenericValidation from "../../validation/GenericValidation";
 import { checkSchema } from "express-validator";
-import express from "express";
-import userOrderRouter from "./userOrders/userOrderRoutes";
+import UserOrderRouter from "./userOrders/userOrderRoutes";
 
 const router = express.Router();
-router.use("/:id/orders", userOrderRouter);
+router.use("/:id/orders", UserOrderRouter);
 
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
@@ -21,14 +21,14 @@ router.get("/:id", checkSchema(GenericValidation.getSingleById), UserController.
 
 /* ------------------------------ Add user ------------------------------- */
 
-router.post("/", checkSchema(UserValSchemas.addNewUser), UserController.addNew);
+router.post("/", checkSchema(UserValidation.addNew), UserController.addNew);
 
 /* ------------------------------ Edit user ------------------------------ */
 
-router.put("/:id", checkSchema(UserValSchemas.editUser), UserController.edit);
+router.put("/:id", checkSchema(UserValidation.edit), UserController.edit);
 
 /* ------------------------------ Delete user ------------------------------ */
 
-router.delete("/:id", checkSchema(UserValSchemas.deleteUser), UserController.remove);
+router.delete("/:id", checkSchema(GenericValidation.remove), UserController.remove);
 
 export default router;

@@ -1,6 +1,6 @@
 import { Schema } from "express-validator";
 
-const addNewUser: Schema = {
+const addNew: Schema = {
   name: {
     in: ["body"],
     isString: {
@@ -27,7 +27,7 @@ const addNewUser: Schema = {
   },
 };
 
-export const editUser: Schema = {
+export const edit: Schema = {
   id: {
     in: ["params"],
     exists: true,
@@ -65,23 +65,13 @@ export const editUser: Schema = {
   },
 };
 
-const deleteUser: Schema = {
-  id: {
-    in: ["params"],
-    isNumeric: {
-      errorMessage: "User ID must be a number",
-    },
-  },
-};
-
 /* -------------------------------------------------------------------------- */
 /*                                 User orders                                */
 /* -------------------------------------------------------------------------- */
 
 const UserValSchemas = {
-  addNewUser,
-  editUser,
-  deleteUser,
+  addNew,
+  edit,
 };
 
 export default UserValSchemas;
