@@ -1,7 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
-import { OrderSchema } from "../../types/order";
+import { Column, Entity, OneToMany, Unique } from "typeorm";
 import Order from "../orders/order";
 import BaseEntity from "../baseEntity";
+import OrderEntity from "../orders/order";
 
 @Entity("users")
 @Unique(["name", "email"])
@@ -19,7 +19,7 @@ class UserEntity extends BaseEntity {
   username!: string;
 
   @OneToMany(() => Order, (order) => order.user_id)
-  orders!: OrderSchema[];
+  orders!: OrderEntity[];
 }
 
 export default UserEntity;

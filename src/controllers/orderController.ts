@@ -2,16 +2,17 @@ import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import OrderService from "../services/OrderService";
 import { matchedData, validationResult } from "express-validator";
-import { OrderSchema } from "../database/types/order";
+import { EntitySansId } from "../database/types/types";
+import OrderEntity from "../database/entities/orders/order";
 
 /* -------------------------------------------------------------------------- */
 /*                              Order controller                              */
 /* -------------------------------------------------------------------------- */
 
-const OrderController = { getAllOrders, getSingleOrderById, addNewOrder, editOrder, deleteOrder };
+const OrderController = { getAll, getSingleById, addNew, edit, remove };
 
 /* ----------------------------- Get all orders ----------------------------- */
-async function getAllOrders(req: Request, res: Response, next: NextFunction) {
+async function getAll(req: Request, res: Response, next: NextFunction) {
   const valRes = validationResult(req);
   if (!valRes.isEmpty()) {
     const error = new ErrorWithStatus(400, "Limit must be a positive number");
@@ -27,7 +28,7 @@ async function getAllOrders(req: Request, res: Response, next: NextFunction) {
 }
 
 /* ---------------------------- Get single order ---------------------------- */
-async function getSingleOrderById(req: Request, res: Response, next: NextFunction) {
+async function getSingleById(req: Request, res: Response, next: NextFunction) {
   if (!validationResult(req).isEmpty()) {
     const error = new ErrorWithStatus(400, "Order ID must be a number");
     next(error);
@@ -46,13 +47,13 @@ async function getSingleOrderById(req: Request, res: Response, next: NextFunctio
 
 /* ----------------------------- Add new order ------------------------------ */
 
-async function addNewOrder(req: Request, res: Response, next: NextFunction) {
+async function addNew(req: Request, res: Response, next: NextFunction) {
   if (!validationResult(req).isEmpty()) {
     const error = new ErrorWithStatus(400, "Invalid order data");
     next(error);
   }
 
-  const data = matchedData(req);
+  const data = matchedData(req) as EntitySansId<OrderEntity>;
 
   const newOrder = await OrderService.addNew(data);
   res.status(201).json(newOrder);
@@ -60,14 +61,14 @@ async function addNewOrder(req: Request, res: Response, next: NextFunction) {
 
 /* ------------------------------- Edit order ------------------------------- */
 
-async function editOrder(req: Request, res: Response, next: NextFunction) {
+async function edit(req: Request, res: Response, next: NextFunction) {
   if (!validationResult(req).isEmpty()) {
     const error = new ErrorWithStatus(400, "Invalid order data");
     next(error);
   }
 
   const orderId = parseInt(req.params.id);
-  const data = matchedData(req) as OrderSchema;
+  const data = matchedData(req) as OrderEntity;
 
   const editedOrder = await OrderService.edit(data);
   res.status(200).json(editedOrder);
@@ -75,7 +76,7 @@ async function editOrder(req: Request, res: Response, next: NextFunction) {
 
 /* ----------------------------- Delete order ------------------------------ */
 
-async function deleteOrder(req: Request, res: Response, next: NextFunction) {
+async function remove(req: Request, res: Response, next: NextFunction) {
   if (!validationResult(req).isEmpty()) {
     const error = new ErrorWithStatus(400, "Order ID must be a number");
     next(error);

@@ -1,9 +1,9 @@
+import OrderEntity from "../database/entities/orders/order";
 import OrderRepository from "../database/repositories/Orders/OrderRepository";
+import { EntitySansId } from "../database/types/types";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import { OrderSchema } from "../database/types/order";
-import dataSource from "../database/dataSource";
 
-const OrderQueries = new OrderRepository(dataSource);
+const OrderRepo = new OrderRepository();
 /* -------------------------------------------------------------------------- */
 /*                                Order Service                               */
 /* -------------------------------------------------------------------------- */
@@ -18,14 +18,14 @@ const OrderService = {
 
 /* ------------------------------ Get all orders ----------------------------- */
 async function getAll(limit?: number) {
-  const orders = await OrderQueries.findAll(limit);
+  const orders = await OrderRepo.findAll(limit);
   return orders;
 }
 
 /* ----------------------------- Get single order ---------------------------- */
 
 async function getById(orderId: number) {
-  const order = await OrderQueries.findOneById(orderId);
+  const order = await OrderRepo.findOneById(orderId);
   if (!order) {
     throw new ErrorWithStatus(404, "Order not found");
   }
@@ -33,16 +33,10 @@ async function getById(orderId: number) {
 }
 
 /* ------------------------------ Add new order ------------------------------ */
-async function addNew(newOrderData: Partial<OrderSchema>) {
-  const { user_id, product_id, quantity } = newOrderData;
-
-  if (!user_id || !product_id || !quantity) {
-    throw new ErrorWithStatus(400, "User ID, product ID and quantity are required");
-  }
-
+async function addNew(newOrderData: EntitySansId<OrderEntity>) {
   try {
-    const addedOrder = await OrderQueries.create(newOrderData);
-    console.log("addedOrder", addedOrder);
+    const addedOrder = await OrderRepo.create(newOrderData);
+
     return addedOrder;
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
@@ -54,15 +48,9 @@ async function addNew(newOrderData: Partial<OrderSchema>) {
 }
 
 /* ------------------------------- Edit order ------------------------------- */
-async function edit(newOrderData: OrderSchema) {
-  const { id, user_id, product_id, quantity } = newOrderData;
-
-  if (!user_id || !product_id || !quantity) {
-    throw new ErrorWithStatus(400, "User ID, product ID and quantity are required");
-  }
-
+async function edit(newOrderData: OrderEntity) {
   try {
-    const editedOrder = await OrderQueries.update(newOrderData);
+    const editedOrder = await OrderRepo.update(newOrderData);
     return editedOrder;
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
@@ -75,7 +63,7 @@ async function edit(newOrderData: OrderSchema) {
 
 /* ----------------------------- Delete order ------------------------------ */
 async function remove(orderId: number) {
-  await OrderQueries.delete(orderId);
+  await OrderRepo.delete(orderId);
 
   return;
 }

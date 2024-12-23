@@ -1,6 +1,4 @@
 import UserEntity from "../../entities/users/user";
-import { UserSchema } from "../../types/user";
-import { DataSource } from "typeorm";
 import BaseRepository from "../BaseRepository";
 
 class UserRepository extends BaseRepository<UserEntity> {
@@ -8,7 +6,7 @@ class UserRepository extends BaseRepository<UserEntity> {
     super(UserEntity);
   }
 
-  async findOneByEmail(email: string): Promise<UserSchema | null> {
+  async findOneByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.repository.findOne({ where: { email } });
     return user;
   }

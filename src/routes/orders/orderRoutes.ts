@@ -1,29 +1,28 @@
-// import express from "express";
-// import { checkSchema } from "express-validator";
-// import OrderController from "../../controllers/orderController";
-// import OrderValSchemas from "../../validation/orderValidation";
+import express from "express";
+import { checkSchema } from "express-validator";
+import OrderController from "../../controllers/OrderController";
+import OrderValSchemas from "../../validation/orders/OrderValidation";
+import GenericValidation from "../../validation/GenericValidation";
 
-// const { getAllOrders, getSingleOrderById, addNewOrder, editOrder, deleteOrder } = OrderController;
+const router = express.Router();
 
-// const router = express.Router();
+/* ------------------------------- All orders ------------------------------ */
+router.get("/", checkSchema(GenericValidation.getAll), OrderController.getAll);
 
-// /* ------------------------------- All orders ------------------------------ */
-// router.get("/", checkSchema(OrderValSchemas.getAllOrders), getAllOrders);
+/* ----------------------------- Single order ----------------------------- */
 
-// /* ----------------------------- Single order ----------------------------- */
+router.get("/:id", checkSchema(GenericValidation.getSingleById), OrderController.getSingleById);
 
-// router.get("/:id", checkSchema(OrderValSchemas.getSingleOrderById), getSingleOrderById);
+/* ------------------------------ Add order ------------------------------ */
 
-// /* ------------------------------ Add order ------------------------------ */
+router.post("/", checkSchema(OrderValSchemas.addNewOrder), OrderController.addNew);
 
-// router.post("/", checkSchema(OrderValSchemas.addNewOrder), addNewOrder);
+/* ------------------------------ Edit order ----------------------------- */
 
-// /* ------------------------------ Edit order ----------------------------- */
+router.put("/:id", checkSchema(OrderValSchemas.editOrder), OrderController.edit);
 
-// router.put("/:id", checkSchema(OrderValSchemas.editOrder), editOrder);
+/* ----------------------------- Delete order ---------------------------- */
 
-// /* ----------------------------- Delete order ---------------------------- */
+router.delete("/:id", checkSchema(OrderValSchemas.deleteOrder), OrderController.remove);
 
-// router.delete("/:id", checkSchema(OrderValSchemas.deleteOrder), deleteOrder);
-
-// export default router;
+export default router;

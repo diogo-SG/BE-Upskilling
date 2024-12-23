@@ -1,24 +1,5 @@
 import { Schema } from "express-validator";
 
-const getAllUsers: Schema = {
-  limit: {
-    in: ["query"],
-    isNumeric: {
-      errorMessage: "Limit must be a number",
-    },
-    optional: true,
-  },
-};
-
-const getSingleUserById: Schema = {
-  id: {
-    in: ["params"],
-    isNumeric: {
-      errorMessage: "User ID must be a number",
-    },
-  },
-};
-
 const addNewUser: Schema = {
   name: {
     in: ["body"],
@@ -97,34 +78,10 @@ const deleteUser: Schema = {
 /*                                 User orders                                */
 /* -------------------------------------------------------------------------- */
 
-const getAllOrdersFromUser: Schema = {
-  limit: {
-    in: ["query"],
-    isNumeric: {
-      errorMessage: "Limit must be a number",
-    },
-    optional: true,
-  },
-};
-
-const getSingleOrderFromUser: Schema = {
-  id: {
-    in: ["params"],
-    isNumeric: {
-      errorMessage: "Order ID must be a number",
-    },
-  },
-};
-
 const UserValSchemas = {
-  getSingleUserById,
-  getAllUsers,
   addNewUser,
   editUser,
   deleteUser,
-  /* --------------------------------- orders --------------------------------- */
-  getAllOrdersFromUser,
-  getSingleOrderFromUser,
 };
 
 export default UserValSchemas;

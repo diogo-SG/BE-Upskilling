@@ -1,16 +1,16 @@
-// import express from "express";
-// import { checkSchema } from "express-validator";
-// import UserValSchemas from "../../../validation/userValidation";
-// import UserController from "../../../controllers/userController";
+import express from "express";
+import { checkSchema } from "express-validator";
+import UserController from "../../../controllers/UserController";
+import GenericValidation from "../../../validation/GenericValidation";
 
-// /* -------------------------------------------------------------------------- */
-// /*                                 User orders                                */
-// /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/*                                 User orders                                */
+/* -------------------------------------------------------------------------- */
 
-// const userOrderRouter = express.Router({ mergeParams: true });
+const userOrderRouter = express.Router({ mergeParams: true });
 
-// /* --------------------------- All orders for user -------------------------- */
+/* --------------------------- All orders for user -------------------------- */
 
-// userOrderRouter.get("/", checkSchema(UserValSchemas.getAllOrdersFromUser), UserController.getAllOrdersFromUser);
+userOrderRouter.get("/", checkSchema(GenericValidation.getAll), UserController.getAll);
 
-// export default userOrderRouter;
+export default userOrderRouter;
