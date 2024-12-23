@@ -1,11 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { OrderSchema } from "../../types/order";
+import Order from "../orders/order";
+import BaseEntity from "../baseEntity";
 
 @Entity("users")
 @Unique(["name", "email"])
-class User {
-  @PrimaryGeneratedColumn("increment")
-  id!: number;
-
+class UserEntity extends BaseEntity {
   @Column({ type: "varchar", length: 100, nullable: false })
   name!: string;
 
@@ -18,11 +18,8 @@ class User {
   @Column({ type: "varchar", length: 100, nullable: false })
   username!: string;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  created_at!: Date;
-
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  updated_at!: Date;
+  @OneToMany(() => Order, (order) => order.user_id)
+  orders!: OrderSchema[];
 }
 
-export default User;
+export default UserEntity;

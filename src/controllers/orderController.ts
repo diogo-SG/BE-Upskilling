@@ -1,89 +1,90 @@
-// import { Request, Response, NextFunction } from "express";
-// import { ErrorWithStatus } from "../middleware/errorHandler";
-// import OrderService from "../services/orderService";
-// import { matchedData, validationResult } from "express-validator";
+import { Request, Response, NextFunction } from "express";
+import { ErrorWithStatus } from "../middleware/errorHandler";
+import OrderService from "../services/OrderService";
+import { matchedData, validationResult } from "express-validator";
+import { OrderSchema } from "../database/types/order";
 
-// /* -------------------------------------------------------------------------- */
-// /*                              Order controller                              */
-// /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/*                              Order controller                              */
+/* -------------------------------------------------------------------------- */
 
-// const OrderController = { getAllOrders, getSingleOrderById, addNewOrder, editOrder, deleteOrder };
+const OrderController = { getAllOrders, getSingleOrderById, addNewOrder, editOrder, deleteOrder };
 
-// /* ----------------------------- Get all orders ----------------------------- */
-// async function getAllOrders(req: Request, res: Response, next: NextFunction) {
-//   const valRes = validationResult(req);
-//   if (!valRes.isEmpty()) {
-//     const error = new ErrorWithStatus(400, "Limit must be a positive number");
-//     next(error);
-//   }
+/* ----------------------------- Get all orders ----------------------------- */
+async function getAllOrders(req: Request, res: Response, next: NextFunction) {
+  const valRes = validationResult(req);
+  if (!valRes.isEmpty()) {
+    const error = new ErrorWithStatus(400, "Limit must be a positive number");
+    next(error);
+  }
 
-//   const data = matchedData(req);
+  const data = matchedData(req);
 
-//   const limit = parseInt(data.limit as string);
-//   const fetchedOrders = await OrderService.getAllOrders(limit);
+  const limit = parseInt(data.limit as string);
+  const fetchedOrders = await OrderService.getAll(limit);
 
-//   res.status(200).json(fetchedOrders);
-// }
+  res.status(200).json(fetchedOrders);
+}
 
-// /* ---------------------------- Get single order ---------------------------- */
-// async function getSingleOrderById(req: Request, res: Response, next: NextFunction) {
-//   if (!validationResult(req).isEmpty()) {
-//     const error = new ErrorWithStatus(400, "Order ID must be a number");
-//     next(error);
-//   }
+/* ---------------------------- Get single order ---------------------------- */
+async function getSingleOrderById(req: Request, res: Response, next: NextFunction) {
+  if (!validationResult(req).isEmpty()) {
+    const error = new ErrorWithStatus(400, "Order ID must be a number");
+    next(error);
+  }
 
-//   const orderId = parseInt(req.params.id);
-//   const order = await OrderService.getSingleOrderById(orderId);
+  const orderId = parseInt(req.params.id);
+  const order = await OrderService.getById(orderId);
 
-//   if (!order) {
-//     const error = new ErrorWithStatus(404, "Order not found");
-//     next(error);
-//   }
+  if (!order) {
+    const error = new ErrorWithStatus(404, "Order not found");
+    next(error);
+  }
 
-//   res.status(200).json(order);
-// }
+  res.status(200).json(order);
+}
 
-// /* ----------------------------- Add new order ------------------------------ */
+/* ----------------------------- Add new order ------------------------------ */
 
-// async function addNewOrder(req: Request, res: Response, next: NextFunction) {
-//   if (!validationResult(req).isEmpty()) {
-//     const error = new ErrorWithStatus(400, "Invalid order data");
-//     next(error);
-//   }
+async function addNewOrder(req: Request, res: Response, next: NextFunction) {
+  if (!validationResult(req).isEmpty()) {
+    const error = new ErrorWithStatus(400, "Invalid order data");
+    next(error);
+  }
 
-//   const data = matchedData(req);
+  const data = matchedData(req);
 
-//   const newOrder = await OrderService.addNewOrder(data);
-//   res.status(201).json(newOrder);
-// }
+  const newOrder = await OrderService.addNew(data);
+  res.status(201).json(newOrder);
+}
 
-// /* ------------------------------- Edit order ------------------------------- */
+/* ------------------------------- Edit order ------------------------------- */
 
-// async function editOrder(req: Request, res: Response, next: NextFunction) {
-//   if (!validationResult(req).isEmpty()) {
-//     const error = new ErrorWithStatus(400, "Invalid order data");
-//     next(error);
-//   }
+async function editOrder(req: Request, res: Response, next: NextFunction) {
+  if (!validationResult(req).isEmpty()) {
+    const error = new ErrorWithStatus(400, "Invalid order data");
+    next(error);
+  }
 
-//   const orderId = parseInt(req.params.id);
-//   const data = matchedData(req);
+  const orderId = parseInt(req.params.id);
+  const data = matchedData(req) as OrderSchema;
 
-//   const editedOrder = await OrderService.editOrder(orderId, data);
-//   res.status(200).json(editedOrder);
-// }
+  const editedOrder = await OrderService.edit(data);
+  res.status(200).json(editedOrder);
+}
 
-// /* ----------------------------- Delete order ------------------------------ */
+/* ----------------------------- Delete order ------------------------------ */
 
-// async function deleteOrder(req: Request, res: Response, next: NextFunction) {
-//   if (!validationResult(req).isEmpty()) {
-//     const error = new ErrorWithStatus(400, "Order ID must be a number");
-//     next(error);
-//   }
+async function deleteOrder(req: Request, res: Response, next: NextFunction) {
+  if (!validationResult(req).isEmpty()) {
+    const error = new ErrorWithStatus(400, "Order ID must be a number");
+    next(error);
+  }
 
-//   const orderId = parseInt(req.params.id);
-//   await OrderService.deleteOrder(orderId);
+  const orderId = parseInt(req.params.id);
+  await OrderService.remove(orderId);
 
-//   res.status(204).end();
-// }
+  res.status(204).end();
+}
 
-// export default OrderController;
+export default OrderController;

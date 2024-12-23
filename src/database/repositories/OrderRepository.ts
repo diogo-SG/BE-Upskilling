@@ -1,4 +1,4 @@
-import Order from "../entities/order";
+import Order from "../entities/orders/order";
 import { OrderSchema } from "../types/order";
 import { DataSource } from "typeorm";
 

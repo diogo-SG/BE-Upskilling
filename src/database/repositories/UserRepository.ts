@@ -1,6 +1,8 @@
-import User from "../entities/user";
+import User from "../entities/users/user";
 import { UserSchema } from "../types/user";
 import { DataSource } from "typeorm";
+
+// todo create base repository class
 
 class UserRepository {
   private dataSource: DataSource;

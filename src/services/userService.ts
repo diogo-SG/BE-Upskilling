@@ -66,22 +66,21 @@ async function addNew(newUserData: Partial<UserSchema>) {
 /* -------------------------------- Edit user ------------------------------- */
 
 async function edit(userData: UserSchema) {
-  // todo: do this validation in controller instead
   try {
-    //     if (!userData.id) {
-    //       throw new ErrorWithStatus(400, "User ID is required");
-    //     }
-    //     let user = await UserQueries.findOneById(userData.id);
-    //     if (!user) {
-    //       throw new ErrorWithStatus(404, "User not found");
-    //     }
+    if (!userData.id) {
+      throw new ErrorWithStatus(400, "User ID is required");
+    }
+    let user = await UserQueries.findOneById(userData.id);
+    if (!user) {
+      throw new ErrorWithStatus(404, "User not found");
+    }
 
-    //     if (userData.email) {
-    //       let userWithSameEmail = await UserQueries.findOneByEmail(userData.email);
-    //       if (userWithSameEmail && userWithSameEmail.id !== userData.id) {
-    //         throw new ErrorWithStatus(400, "User with this email already exists");
-    //       }
-    //     }
+    if (userData.email) {
+      let userWithSameEmail = await UserQueries.findOneByEmail(userData.email);
+      if (userWithSameEmail && userWithSameEmail.id !== userData.id) {
+        throw new ErrorWithStatus(400, "User with this email already exists");
+      }
+    }
 
     const updatedUser = await UserQueries.update(userData);
     return updatedUser;
