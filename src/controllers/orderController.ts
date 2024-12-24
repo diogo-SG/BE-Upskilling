@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import OrderService from "../services/OrderService";
 import { matchedData, validationResult } from "express-validator";
-import { EntityNoMetadata } from "../database/types/types";
+import { EntityNoMetadata, OrderWithLines } from "../database/types/types";
 import OrderEntity from "../database/entities/orders/OrderEntity";
 
 /* -------------------------------------------------------------------------- */
@@ -67,9 +67,8 @@ async function edit(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 
-  const data = matchedData(req) as EntityNoMetadata<OrderEntity>;
+  const data = matchedData(req) as OrderWithLines;
 
-  // todo fix
   const editedOrder = await OrderService.edit(data);
   res.status(200).json(editedOrder);
 }
