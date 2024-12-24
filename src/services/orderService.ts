@@ -1,7 +1,7 @@
 import OrderEntity from "../database/entities/orders/OrderEntity";
 import { OrderLineRepository } from "../database/repositories/Orders/OrderLineRepository";
 import OrderRepository from "../database/repositories/Orders/OrderRepository";
-import { EntityNoMetadata, OrderWithLines } from "../database/types/types";
+import { EntityNoMetadata, isArrayOfNumbers, OrderWithLines } from "../database/types/types";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 
 const OrderRepo = new OrderRepository();
@@ -56,13 +56,38 @@ async function addNew(newOrderData: EntityNoMetadata<OrderEntity>) {
 }
 
 /* ------------------------------- Edit order ------------------------------- */
-async function edit(newOrderData: OrderWithLines) {
+async function edit(newOrderData: OrderEntity | OrderWithLines) {
   try {
+    let orderLinesToDelete: number[] = [];
+    let newOrderLineIds: number[] = [];
+
+    if (!newOrderData.order_lines) {
+      newOrderData.order_lines = [];
+    }
+
+    // Get the existing order
+    const existingOrder = await OrderRepo.findOneById(newOrderData.id);
+    if (!existingOrder) {
+      throw new ErrorWithStatus(404, "Order not found");
+    }
+    const existingOrderLineIds = existingOrder?.order_lines?.map((line) => line) ?? ([] as number[]);
+
+    // if we just get the order lines ids, we need to fetch the order lines
+    if (newOrderData.order_lines && isArrayOfNumbers(newOrderData.order_lines)) {
+      const newOrderLineIds = newOrderData.order_lines;
+
+      // But first, if some order lines have been removed, we need to delete them
+      orderLinesToDelete = existingOrderLineIds.filter((lineId) => !newOrderLineIds.includes(lineId));
+
+      const orderLines = await OrderLineRepo.findAllByOrderId(newOrderData.id);
+      newOrderData.order_lines = orderLines;
+    }
+
+    /* ---------------------------- Now let's update ---------------------------- */
     const orderLines = newOrderData.order_lines;
+    newOrderLineIds = orderLines.map((line) => line.id);
 
-    const orderLineIds = orderLines.map((line) => line.id);
-    const orderData: EntityNoMetadata<OrderEntity> = { ...newOrderData, order_lines: orderLineIds };
-
+    const orderData: EntityNoMetadata<OrderEntity> = { ...newOrderData, order_lines: newOrderLineIds };
     const editedOrder = await OrderRepo.update(orderData);
 
     const editedOrderLinesPromises = orderLines.map((line) => {
@@ -72,6 +97,17 @@ async function edit(newOrderData: OrderWithLines) {
     await Promise.all(editedOrderLinesPromises).catch((error) => {
       throw new ErrorWithStatus(500, "Something went wrong");
     });
+
+    // Delete the order lines that have been removed
+    if (orderLinesToDelete.length > 0) {
+      const orderLinesToDeletePromises = orderLinesToDelete.map((lineId) => {
+        return OrderLineRepo.delete(lineId);
+      });
+
+      await Promise.all(orderLinesToDeletePromises).catch((error) => {
+        throw new ErrorWithStatus(500, "Something went wrong");
+      });
+    }
 
     return editedOrder;
   } catch (error) {

@@ -63,6 +63,16 @@ export const edit: Schema = {
       errorMessage: "Username must be a string",
     },
   },
+  orders: {
+    in: ["body"],
+    optional: true,
+    isArray: {
+      errorMessage: "Orders must be an array",
+    },
+    notEmpty: {
+      errorMessage: "Orders must not be empty",
+    },
+  },
 };
 
 /* -------------------------------------------------------------------------- */

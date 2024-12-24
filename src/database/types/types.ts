@@ -16,3 +16,15 @@ export interface OrderWithLines {
   status: string;
   order_lines: OrderLineEntity[];
 }
+
+/* -------------------------------------------------------------------------- */
+/*                            Type checking helpers                           */
+/* -------------------------------------------------------------------------- */
+
+export function isArrayOfNumbers(arr: any[]): arr is number[] {
+  return Array.isArray(arr) && arr.every((item) => typeof item === "number");
+}
+
+export function isArrayOfStrings(arr: any[]): arr is string[] {
+  return Array.isArray(arr) && arr.every((item) => typeof item === "string");
+}
