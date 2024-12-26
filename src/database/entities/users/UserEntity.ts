@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, Unique } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, Unique } from "typeorm";
 import Order from "../orders/OrderEntity";
 import BaseEntity from "../BaseEntity";
 import OrderEntity from "../orders/OrderEntity";

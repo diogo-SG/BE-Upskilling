@@ -3,7 +3,7 @@ import { ErrorWithStatus } from "../middleware/errorHandler";
 import UsersService from "../services/UserService";
 import { matchedData, validationResult } from "express-validator";
 import UserEntity from "../database/entities/users/UserEntity";
-import { EntitySansId } from "../database/types/types";
+import { EntityNoMetadata } from "../database/types/types";
 
 /* -------------------------------------------------------------------------- */
 /*                               User Controller                              */
@@ -88,7 +88,7 @@ async function addNew(req: Request, res: Response, next: NextFunction) {
     const error = new ErrorWithStatus(400, errorMsg);
     next(error);
   }
-  const data = matchedData(req) as EntitySansId<UserEntity>;
+  const data = matchedData(req) as EntityNoMetadata<UserEntity>;
 
   try {
     const newUser = await UsersService.addNew(data);

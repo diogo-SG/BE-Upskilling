@@ -53,7 +53,7 @@ async function addNew(newUserData: EntityNoMetadata<UserEntity>) {
       throw error;
     }
 
-    throw new ErrorWithStatus(500, "Something went wrong");
+    throw new ErrorWithStatus(500, `Something went wrong: ${error})}`);
   }
 }
 

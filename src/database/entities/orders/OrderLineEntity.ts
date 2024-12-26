@@ -5,7 +5,7 @@ import BaseEntity from "../BaseEntity";
 
 @Entity("order_lines")
 class OrderLineEntity extends BaseEntity {
-  @ManyToOne(() => OrderEntity, (order) => order.order_lines)
+  @ManyToOne(() => OrderEntity, (order) => order.order_lines, { onDelete: "CASCADE" })
   @JoinColumn({ name: "order_id" })
   order!: OrderEntity;
 
