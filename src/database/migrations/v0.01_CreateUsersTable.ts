@@ -1,6 +1,6 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm";
 
-export class CreateUsersTable1734540142082 implements MigrationInterface {
+export class v0_01_CreateUsersTable1734540142082 implements MigrationInterface {
   /* -------------------------------------------------------------------------- */
   /*                                Create tables                               */
   /* -------------------------------------------------------------------------- */
@@ -47,6 +47,8 @@ export class CreateUsersTable1734540142082 implements MigrationInterface {
           {
             name: "orders",
             type: "int",
+            isArray: true,
+            isNullable: true,
           },
           {
             name: "created_at",
@@ -79,13 +81,18 @@ export class CreateUsersTable1734540142082 implements MigrationInterface {
             type: "int",
             isNullable: false,
           },
-          { name: "product_id", type: "int", isNullable: false },
           {
-            name: "quantity",
-            type: "int",
+            name: "status",
+            type: "varchar",
+            length: "100",
             isNullable: false,
           },
-
+          {
+            name: "order_lines",
+            type: "int",
+            isArray: true,
+            isNullable: true,
+          },
           {
             name: "created_at",
             type: "timestamp",
@@ -95,14 +102,6 @@ export class CreateUsersTable1734540142082 implements MigrationInterface {
             name: "updated_at",
             type: "timestamp",
             default: "now()",
-          },
-        ],
-        foreignKeys: [
-          {
-            columnNames: ["user_id"],
-            referencedTableName: "users",
-            referencedColumnNames: ["id"],
-            onDelete: "CASCADE",
           },
         ],
       })
@@ -186,20 +185,37 @@ export class CreateUsersTable1734540142082 implements MigrationInterface {
             default: "now()",
           },
         ],
-        foreignKeys: [
-          {
-            columnNames: ["order_id"],
-            referencedTableName: "orders",
-            referencedColumnNames: ["id"],
-            onDelete: "CASCADE",
-          },
-          {
-            columnNames: ["user_id"],
-            referencedTableName: "users",
-            referencedColumnNames: ["id"],
-            onDelete: "CASCADE",
-          },
-        ],
+      })
+    );
+
+    /* ---------------------------- Add foreign keys ---------------------------- */
+    await queryRunner.createForeignKey(
+      "orders",
+      new TableForeignKey({
+        columnNames: ["user_id"],
+        referencedColumnNames: ["id"],
+        referencedTableName: "users",
+        onDelete: "CASCADE",
+      })
+    );
+
+    await queryRunner.createForeignKey(
+      "order_lines",
+      new TableForeignKey({
+        columnNames: ["order_id"],
+        referencedColumnNames: ["id"],
+        referencedTableName: "orders",
+        onDelete: "CASCADE",
+      })
+    );
+
+    await queryRunner.createForeignKey(
+      "order_lines",
+      new TableForeignKey({
+        columnNames: ["product_id"],
+        referencedColumnNames: ["id"],
+        referencedTableName: "products",
+        onDelete: "CASCADE",
       })
     );
   }

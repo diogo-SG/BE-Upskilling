@@ -83,7 +83,7 @@ async function edit(newOrderData: OrderEntity | OrderWithLines) {
       newOrderData.order_lines = orderLines;
     }
 
-    /* ---------------------------- Now let's update ---------------------------- */
+    // now let's update things
     const orderLines = newOrderData.order_lines;
     newOrderLineIds = orderLines.map((line) => line.id);
 

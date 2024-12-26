@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { CreateUsersTable1734540142082 } from "./migrations/1734540142082-CreateUsersTable";
+import { migrations } from "./migrations";
 import UserEntity from "./entities/users/UserEntity";
 import OrderEntity from "./entities/orders/OrderEntity";
 import OrderLineEntity from "./entities/orders/OrderLineEntity";
@@ -14,7 +14,7 @@ const dataSource = new DataSource({
   password: process.env.DB_PASSWORD || "password",
   database: process.env.DB_NAME || "postgres",
   port: parseInt(port),
-  migrations: [CreateUsersTable1734540142082],
+  migrations,
   entities: [UserEntity, OrderEntity, OrderLineEntity, ProductEntity],
 });
 
