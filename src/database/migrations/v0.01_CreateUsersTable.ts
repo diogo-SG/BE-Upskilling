@@ -88,12 +88,6 @@ export class v0_01_CreateUsersTable1734540142082 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: "order_lines",
-            type: "int",
-            isArray: true,
-            isNullable: true,
-          },
-          {
             name: "created_at",
             type: "timestamp",
             default: "now()",

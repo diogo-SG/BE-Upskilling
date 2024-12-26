@@ -16,14 +16,14 @@ export class v0_02_SeedTables1734540142083 implements MigrationInterface {
           email: "johndoe@sharklasers.com",
           password: "password",
           username: "johndoe",
-          orders: [],
+          orders: [1],
         },
         {
           name: "Jane Doe",
           email: "janedoe@sharklasers.com",
           password: "password",
           username: "janedoe",
-          orders: [],
+          orders: [2, 3],
         },
       ])
       .execute();
@@ -58,17 +58,14 @@ export class v0_02_SeedTables1734540142083 implements MigrationInterface {
         {
           user_id: 1,
           status: "complete",
-          order_lines: [1, 2],
         },
         {
           user_id: 2,
           status: "complete",
-          order_lines: [3, 4],
         },
         {
           user_id: 2,
           status: "pending",
-          order_lines: [5],
         },
       ])
       .execute();

@@ -5,13 +5,19 @@ import BaseEntity from "../BaseEntity";
 
 @Entity("order_lines")
 class OrderLineEntity extends BaseEntity {
-  @ManyToOne(() => OrderEntity, (order) => order.id)
+  @ManyToOne(() => OrderEntity, (order) => order.order_lines)
   @JoinColumn({ name: "order_id" })
-  order_id!: OrderEntity;
+  order!: OrderEntity;
+
+  @Column({ type: "int", nullable: false })
+  order_id!: number;
 
   @OneToOne(() => ProductEntity, (product) => product.id)
   @JoinColumn({ name: "product_id" })
-  product_id!: ProductEntity;
+  product!: ProductEntity;
+
+  @Column({ type: "int", nullable: false })
+  product_id!: number;
 
   @Column({ type: "int", nullable: false })
   quantity!: number;
