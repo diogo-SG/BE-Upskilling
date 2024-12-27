@@ -29,10 +29,10 @@ const remove: Schema = {
 };
 
 const login: Schema = {
-  username: {
+  email: {
     in: ["body"],
-    isString: {
-      errorMessage: "Username must be a string",
+    isEmail: {
+      errorMessage: "Email must be a valid email address",
     },
   },
   password: {

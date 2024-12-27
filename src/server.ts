@@ -1,7 +1,8 @@
 import express from "express";
-import userRouter from "./routes/users/UserRoutes";
-import orderRouter from "./routes/orders/OrderRoutes";
-import productRouter from "./routes/products/ProductRoutes";
+import UserRouter from "./routes/users/UserRoutes";
+import OrderRouter from "./routes/orders/OrderRoutes";
+import ProductRouter from "./routes/products/ProductRoutes";
+import AuthRouter from "./routes/auth/AuthRoutes";
 import logger from "./middleware/logger";
 import errorHandler from "./middleware/errorHandler";
 import catchAllError from "./middleware/catchAllError";
@@ -18,9 +19,10 @@ app.use(express.urlencoded({ extended: false }));
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
-app.use("/api/users", userRouter);
-app.use("/api/orders", orderRouter);
-app.use("/api/products", productRouter);
+app.use("/auth", AuthRouter);
+app.use("/api/users", UserRouter);
+app.use("/api/orders", OrderRouter);
+app.use("/api/products", ProductRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello world!");
