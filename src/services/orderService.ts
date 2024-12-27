@@ -62,66 +62,34 @@ async function addNew(newOrderData: EntityNoMetadata<OrderWithLines>) {
       throw error;
     }
 
-    throw new ErrorWithStatus(500, "Something went wrong");
+    throw new ErrorWithStatus(500, "Something went wrong" + error);
   }
 }
 
 /* ------------------------------- Edit order ------------------------------- */
-// todo fix
-async function edit(newOrderData: OrderEntity | OrderWithLines) {
+async function edit(newOrderData: OrderWithLines) {
   try {
-    let orderLinesToDelete: number[] = [];
-    let newOrderLineIds: number[] = [];
-
-    if (!newOrderData.order_lines) {
-      newOrderData.order_lines = [];
-    }
-
-    // Get the existing order
+    const orderLines = newOrderData.order_lines;
+    // get the existing order
     const existingOrder = await OrderRepo.findOneById(newOrderData.id);
     if (!existingOrder) {
       throw new ErrorWithStatus(404, "Order not found");
     }
-    const existingOrderLineIds = existingOrder?.order_lines?.map((line) => line) ?? ([] as number[]);
+    const newOrder: Partial<OrderWithLines> = { ...existingOrder, ...newOrderData };
+    delete newOrder.order_lines;
 
-    // // // if we just get the order lines ids, we need to fetch the order lines
-    // // if (newOrderData.order_lines && isArrayOfNumbers(newOrderData.order_lines)) {
-    // //   const newOrderLineIds = newOrderData.order_lines;
+    const editedOrder = await OrderRepo.update(newOrder);
 
-    // //   // But first, if some order lines have been removed, we need to delete them
-    // //   orderLinesToDelete = existingOrderLineIds.filter((lineId) => !newOrderLineIds.includes(lineId));
+    // todo partial order line update
+    const editedOrderLinesPromises = orderLines.map((line) => {
+      return OrderLineRepo.update(line);
+    });
 
-    // //   const orderLines = await OrderLineRepo.findAllByOrderId(newOrderData.id);
-    // //   newOrderData.order_lines = orderLines;
-    // // }
+    await Promise.all(editedOrderLinesPromises).catch((error) => {
+      throw new ErrorWithStatus(500, "Something went wrong" + error);
+    });
 
-    // // // now let's update things
-    // // const orderLines = newOrderData.order_lines;
-    // // newOrderLineIds = orderLines.map((line) => line.id);
-
-    // // const orderData: EntityNoMetadata<OrderEntity> = { ...newOrderData, order_lines: newOrderLineIds };
-    // // const editedOrder = await OrderRepo.update(orderData);
-
-    // // const editedOrderLinesPromises = orderLines.map((line) => {
-    // //   return OrderLineRepo.update(line);
-    // // });
-
-    // // await Promise.all(editedOrderLinesPromises).catch((error) => {
-    // //   throw new ErrorWithStatus(500, "Something went wrong");
-    // // });
-
-    // // // Delete the order lines that have been removed
-    // // if (orderLinesToDelete.length > 0) {
-    // //   const orderLinesToDeletePromises = orderLinesToDelete.map((lineId) => {
-    // //     return OrderLineRepo.delete(lineId);
-    // //   });
-
-    // //   await Promise.all(orderLinesToDeletePromises).catch((error) => {
-    // //     throw new ErrorWithStatus(500, "Something went wrong");
-    // //   });
-    // // }
-
-    // return editedOrder;
+    return { ...editedOrder, order_lines: orderLines };
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       throw error;

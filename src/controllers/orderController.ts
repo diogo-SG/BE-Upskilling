@@ -67,10 +67,14 @@ async function edit(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 
-  const data = matchedData(req) as OrderWithLines;
+  try {
+    const data = matchedData(req) as OrderWithLines;
 
-  const editedOrder = await OrderService.edit(data);
-  res.status(200).json(editedOrder);
+    const editedOrder = await OrderService.edit(data);
+    res.status(200).json(editedOrder);
+  } catch (error) {
+    next(error);
+  }
 }
 
 /* ----------------------------- Delete order ------------------------------ */
