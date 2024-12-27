@@ -28,10 +28,26 @@ const remove: Schema = {
   },
 };
 
+const login: Schema = {
+  username: {
+    in: ["body"],
+    isString: {
+      errorMessage: "Username must be a string",
+    },
+  },
+  password: {
+    in: ["body"],
+    isString: {
+      errorMessage: "Password must be a string",
+    },
+  },
+};
+
 const GenericValidation = {
   getAll,
   getSingleById,
   remove,
+  login,
 };
 
 export default GenericValidation;

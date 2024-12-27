@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import UsersService from "../services/UserService";
+import UsersService from "../services/userService";
 import { matchedData, validationResult } from "express-validator";
 import UserEntity from "../database/entities/users/UserEntity";
 import { EntityNoMetadata } from "../database/types/types";
