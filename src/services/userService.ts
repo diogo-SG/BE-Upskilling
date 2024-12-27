@@ -1,30 +1,34 @@
-import * as UserQueries from "../database/queries/userQueries";
+import UserRepository from "../database/repositories/Users/UserRepository";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import { UserSchema } from "../schemas/user";
+import OrderRepository from "../database/repositories/Orders/OrderRepository";
+import UserEntity from "../database/entities/users/UserEntity";
+import { EntityNoMetadata } from "../database/types/types";
 
 /* -------------------------------------------------------------------------- */
 /*                                Users Service                               */
 /* -------------------------------------------------------------------------- */
+const UserRepo = new UserRepository();
+const OrderRepo = new OrderRepository();
 
 const UserService = {
-  getAllUsers,
-  getSingleUserById,
-  addNewUser,
-  editUser,
-  deleteUser,
-  getAllOrdersFromUser,
+  getAll,
+  getOneById,
+  addNew,
+  edit,
+  remove,
+  getAllOrders,
 };
 
 /* ------------------------------ Get all users ----------------------------- */
 
-async function getAllUsers(limit?: number) {
-  const users = await UserQueries.getAllUsers(limit);
+async function getAll(limit?: number) {
+  const users = await UserRepo.findAll(limit);
   return users;
 }
 
 /* ----------------------------- Get single user ---------------------------- */
-async function getSingleUserById(userId: number) {
-  const user = await UserQueries.getSingleUserById(userId);
+async function getOneById(userId: number) {
+  const user = await UserRepo.findOneById(userId);
   if (!user) {
     throw new ErrorWithStatus(404, "User not found");
   }
@@ -33,47 +37,44 @@ async function getSingleUserById(userId: number) {
 
 /* ------------------------------ Add new user ------------------------------ */
 
-async function addNewUser(newUserData: Partial<UserSchema>) {
+async function addNew(newUserData: EntityNoMetadata<UserEntity>) {
   const { name, email, password, username } = newUserData;
 
-  if (!name || !email || !password || !username) {
-    throw new ErrorWithStatus(400, "Name, email, username and password are required");
-  }
-
   try {
-    const emailCheckRes = await UserQueries.checkIfUserExistsByEmail(email);
+    const emailCheckRes = await UserRepo.findOneByEmail(email);
     if (emailCheckRes) {
       throw new ErrorWithStatus(400, "User with this email already exists");
     }
 
-    const addedUser = await UserQueries.addNewUser(name, email, password, username);
+    const addedUser = await UserRepo.create({ name, email, password, username });
     return addedUser;
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       throw error;
     }
 
-    throw new ErrorWithStatus(500, "Something went wrong");
+    throw new ErrorWithStatus(500, `Something went wrong: ${error})}`);
   }
 }
 
 /* -------------------------------- Edit user ------------------------------- */
 
-async function editUser(userId: number, userData: Partial<UserSchema>) {
-  let user = await UserQueries.getSingleUserById(userId);
-  if (!user) {
-    throw new ErrorWithStatus(404, "User not found");
-  }
-
-  if (userData.email) {
-    let userWithSameEmail = await UserQueries.checkIfUserExistsByEmail(userData.email);
-    if (userWithSameEmail && userWithSameEmail.id !== userId) {
-      throw new ErrorWithStatus(400, "User with this email already exists");
-    }
-  }
-
+async function edit(userData: UserEntity) {
   try {
-    const updatedUser = await UserQueries.editUser(userId, userData);
+    // todo move this validation to controller
+    let user = await UserRepo.findOneById(userData.id);
+    if (!user) {
+      throw new ErrorWithStatus(404, "User not found");
+    }
+
+    if (userData.email) {
+      let userWithSameEmail = await UserRepo.findOneByEmail(userData.email);
+      if (userWithSameEmail && userWithSameEmail.id !== userData.id) {
+        throw new ErrorWithStatus(400, "User with this email already exists");
+      }
+    }
+
+    const updatedUser = await UserRepo.update(userData);
     return updatedUser;
   } catch (error) {
     console.log(error);
@@ -83,14 +84,14 @@ async function editUser(userId: number, userData: Partial<UserSchema>) {
 
 /* ----------------------------- Delete user ------------------------------ */
 
-async function deleteUser(userId: number) {
+async function remove(userId: number) {
   try {
-    const user = await UserQueries.getSingleUserById(userId);
+    const user = await UserRepo.findOneById(userId);
     if (!user) {
       throw new ErrorWithStatus(404, "User not found");
     }
 
-    await UserQueries.deleteUser(userId);
+    await UserRepo.delete(userId);
   } catch (error) {
     throw new ErrorWithStatus(500, "Something went wrong");
   }
@@ -100,8 +101,8 @@ async function deleteUser(userId: number) {
 /*                                 User orders                                */
 /* -------------------------------------------------------------------------- */
 
-async function getAllOrdersFromUser(userId: number) {
-  const orders = await UserQueries.getAllOrdersFromUser(userId);
+async function getAllOrders(userId: number) {
+  const orders = await OrderRepo.findAllByUserId(userId);
   return orders;
 }
 

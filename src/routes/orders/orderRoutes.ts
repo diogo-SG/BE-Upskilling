@@ -1,29 +1,28 @@
 import express from "express";
 import { checkSchema } from "express-validator";
-import OrderController from "../../controllers/orderController";
-import OrderValSchemas from "../../validation/orderValidation";
-
-const { getAllOrders, getSingleOrderById, addNewOrder, editOrder, deleteOrder } = OrderController;
+import OrderController from "../../controllers/OrderController";
+import OrderValidation from "../../validation/orders/OrderValidation";
+import GenericValidation from "../../validation/GenericValidation";
 
 const router = express.Router();
 
 /* ------------------------------- All orders ------------------------------ */
-router.get("/", checkSchema(OrderValSchemas.getAllOrders), getAllOrders);
+router.get("/", checkSchema(GenericValidation.getAll), OrderController.getAll);
 
 /* ----------------------------- Single order ----------------------------- */
 
-router.get("/:id", checkSchema(OrderValSchemas.getSingleOrderById), getSingleOrderById);
+router.get("/:id", checkSchema(GenericValidation.getSingleById), OrderController.getSingleById);
 
 /* ------------------------------ Add order ------------------------------ */
 
-router.post("/", checkSchema(OrderValSchemas.addNewOrder), addNewOrder);
+router.post("/", checkSchema(OrderValidation.addNew), OrderController.addNew);
 
 /* ------------------------------ Edit order ----------------------------- */
 
-router.put("/:id", checkSchema(OrderValSchemas.editOrder), editOrder);
+router.put("/:id", checkSchema(OrderValidation.edit), OrderController.edit);
 
 /* ----------------------------- Delete order ---------------------------- */
 
-router.delete("/:id", checkSchema(OrderValSchemas.deleteOrder), deleteOrder);
+router.delete("/:id", checkSchema(GenericValidation.remove), OrderController.remove);
 
 export default router;

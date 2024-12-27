@@ -1,35 +1,34 @@
-import UsersController from "../../controllers/userController";
-import UserValSchemas from "../../validation/userValidation";
-import { checkSchema } from "express-validator";
 import express from "express";
-import userOrderRouter from "./userOrders/userOrderRoutes";
-
-const { getAllUsers, getSingleUserById, addNewUser, editUser, deleteUser } = UsersController;
+import UserController from "../../controllers/UserController";
+import UserValidation from "../../validation/users/UserValidation";
+import GenericValidation from "../../validation/GenericValidation";
+import { checkSchema } from "express-validator";
+import UserOrderRouter from "./userOrders/UserOrderRoutes";
 
 const router = express.Router();
-router.use("/:id/orders", userOrderRouter);
+router.use("/:id/orders", UserOrderRouter);
 
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------- All users ------------------------------- */
 
-router.get("/", checkSchema(UserValSchemas.getAllUsers), getAllUsers);
+router.get("/", checkSchema(GenericValidation.getAll), UserController.getAll);
 
 /* ----------------------------- Single user ------------------------------ */
 
-router.get("/:id", checkSchema(UserValSchemas.getSingleUserById), getSingleUserById);
+router.get("/:id", checkSchema(GenericValidation.getSingleById), UserController.getSingleById);
 
 /* ------------------------------ Add user ------------------------------- */
 
-router.post("/", checkSchema(UserValSchemas.addNewUser), addNewUser);
+router.post("/", checkSchema(UserValidation.addNew), UserController.addNew);
 
 /* ------------------------------ Edit user ------------------------------ */
 
-router.put("/:id", checkSchema(UserValSchemas.editUser), editUser);
+router.put("/:id", checkSchema(UserValidation.edit), UserController.edit);
 
 /* ------------------------------ Delete user ------------------------------ */
 
-router.delete("/:id", checkSchema(UserValSchemas.deleteUser), deleteUser);
+router.delete("/:id", checkSchema(GenericValidation.remove), UserController.remove);
 
 export default router;

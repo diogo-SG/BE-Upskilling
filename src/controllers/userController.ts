@@ -1,19 +1,21 @@
 import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import UsersService from "../services/userService";
+import UsersService from "../services/UserService";
 import { matchedData, validationResult } from "express-validator";
+import UserEntity from "../database/entities/users/UserEntity";
+import { EntityNoMetadata } from "../database/types/types";
 
 /* -------------------------------------------------------------------------- */
 /*                               User Controller                              */
 /* -------------------------------------------------------------------------- */
 
 const UserController = {
-  getAllUsers,
-  getSingleUserById,
-  addNewUser,
-  editUser,
-  deleteUser,
-  getAllOrdersFromUser,
+  getAll,
+  getSingleById,
+  addNew,
+  edit,
+  remove,
+  getAllOrders,
 };
 
 /* ------------------------------ Get all users ----------------------------- */
@@ -23,7 +25,7 @@ const UserController = {
  * @throws - a 400 error if the limit query param is invalid
  * @example - GET /api/users?limit=5
  */
-async function getAllUsers(req: Request, res: Response, next: NextFunction) {
+async function getAll(req: Request, res: Response, next: NextFunction) {
   const valRes = validationResult(req);
   if (!valRes.isEmpty()) {
     console.log(valRes);
@@ -34,7 +36,7 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
   const data = matchedData(req);
 
   const limit = parseInt(data.limit as string);
-  const fetchedUsers = await UsersService.getAllUsers(limit);
+  const fetchedUsers = await UsersService.getAll(limit);
 
   res.status(200).json(fetchedUsers);
 }
@@ -46,14 +48,14 @@ async function getAllUsers(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - GET /api/users/1
  */
-async function getSingleUserById(req: Request, res: Response, next: NextFunction) {
+async function getSingleById(req: Request, res: Response, next: NextFunction) {
   if (!validationResult(req).isEmpty()) {
     const error = new ErrorWithStatus(400, "User ID must be a number");
     next(error);
   }
 
   const userId = parseInt(req.params.id);
-  const user = await UsersService.getSingleUserById(userId);
+  const user = await UsersService.getOneById(userId);
 
   if (!user) {
     const error = new ErrorWithStatus(404, "User not found");
@@ -71,7 +73,7 @@ async function getSingleUserById(req: Request, res: Response, next: NextFunction
  * @throws - a 400 error if the request body is invalid
  * @example - POST /api/users
  */
-async function addNewUser(req: Request, res: Response, next: NextFunction) {
+async function addNew(req: Request, res: Response, next: NextFunction) {
   if (!validationResult(req).isEmpty()) {
     const errorsList = validationResult(req).array();
 
@@ -86,10 +88,10 @@ async function addNewUser(req: Request, res: Response, next: NextFunction) {
     const error = new ErrorWithStatus(400, errorMsg);
     next(error);
   }
-  const data = matchedData(req);
+  const data = matchedData(req) as EntityNoMetadata<UserEntity>;
 
   try {
-    const newUser = await UsersService.addNewUser(data);
+    const newUser = await UsersService.addNew(data);
     console.log(newUser);
     // 201 Created = We created a new resource
     res.status(201).json(newUser);
@@ -105,7 +107,7 @@ async function addNewUser(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - PUT /api/users/1
  */
-async function editUser(req: Request, res: Response, next: NextFunction) {
+async function edit(req: Request, res: Response, next: NextFunction) {
   const userId = parseInt(req.params.id);
 
   if (!validationResult(req).isEmpty()) {
@@ -123,7 +125,7 @@ async function editUser(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 
-  const incomingUpdateData = matchedData(req);
+  const incomingUpdateData = matchedData(req) as UserEntity;
 
   if (!incomingUpdateData.name && !incomingUpdateData.email) {
     const error = new ErrorWithStatus(400, "At least one update field is required");
@@ -131,7 +133,7 @@ async function editUser(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const updatedUser = await UsersService.editUser(userId, incomingUpdateData);
+    const updatedUser = await UsersService.edit(incomingUpdateData);
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -146,14 +148,14 @@ async function editUser(req: Request, res: Response, next: NextFunction) {
  * @throws - a 404 error if the user is not found
  * @example - DELETE /api/users/1
  */
-async function deleteUser(req: Request, res: Response, next: NextFunction) {
+async function remove(req: Request, res: Response, next: NextFunction) {
   try {
     if (!validationResult(req).isEmpty()) {
       const error = new ErrorWithStatus(400, "User ID must be a number");
       next(error);
     }
     const userId = parseInt(req.params.id);
-    await UsersService.deleteUser(userId);
+    await UsersService.remove(userId);
 
     // 204 No content = We did the thing, no need to return anything
     // I guess in this case a 200 OK would also be fine with a message saying it was deleted successfully
@@ -168,9 +170,9 @@ async function deleteUser(req: Request, res: Response, next: NextFunction) {
 /*                                 User orders                                */
 /* -------------------------------------------------------------------------- */
 
-export async function getAllOrdersFromUser(req: Request, res: Response, next: NextFunction) {
+export async function getAllOrders(req: Request, res: Response, next: NextFunction) {
   const userId = parseInt(req.params.id);
-  const orders = await UsersService.getAllOrdersFromUser(userId);
+  const orders = await UsersService.getAllOrders(userId);
   res.status(200).json(orders);
 }
 

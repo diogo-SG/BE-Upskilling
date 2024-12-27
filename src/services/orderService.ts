@@ -1,67 +1,95 @@
-import * as OrderQueries from "../database/queries/orderQueries";
+import OrderEntity from "../database/entities/orders/OrderEntity";
+import { OrderLineRepository } from "../database/repositories/Orders/OrderLineRepository";
+import OrderRepository from "../database/repositories/Orders/OrderRepository";
+import { EntityNoMetadata, isArrayOfNumbers, OrderWithLines } from "../database/types/types";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import { OrderSchema } from "../schemas/order";
 
+const OrderRepo = new OrderRepository();
+const OrderLineRepo = new OrderLineRepository();
 /* -------------------------------------------------------------------------- */
 /*                                Order Service                               */
 /* -------------------------------------------------------------------------- */
 
 const OrderService = {
-  getAllOrders,
-  getSingleOrderById,
-  addNewOrder,
-  editOrder,
-  deleteOrder,
+  getAll,
+  getById,
+  addNew,
+  edit,
+  remove,
 };
 
 /* ------------------------------ Get all orders ----------------------------- */
-async function getAllOrders(limit?: number) {
-  const orders = await OrderQueries.getAllOrders(limit);
+async function getAll(limit?: number) {
+  const orders = await OrderRepo.findAll(limit);
   return orders;
 }
 
 /* ----------------------------- Get single order ---------------------------- */
 
-async function getSingleOrderById(orderId: number) {
-  const order = await OrderQueries.getSingleOrderById(orderId);
+async function getById(orderId: number) {
+  const order = await OrderRepo.findOneById(orderId);
   if (!order) {
     throw new ErrorWithStatus(404, "Order not found");
   }
-  return order;
+  const orderLines = await OrderLineRepo.findAllByOrderId(orderId);
+  const orderWithLines: OrderWithLines = { ...order, order_lines: orderLines };
+  return orderWithLines;
 }
 
 /* ------------------------------ Add new order ------------------------------ */
-async function addNewOrder(newOrderData: Partial<OrderSchema>) {
-  const { user_id, product_id, quantity } = newOrderData;
-
-  if (!user_id || !product_id || !quantity) {
-    throw new ErrorWithStatus(400, "User ID, product ID and quantity are required");
-  }
-
+async function addNew(newOrderData: EntityNoMetadata<OrderWithLines>) {
   try {
-    const addedOrder = await OrderQueries.addNewOrder(newOrderData);
-    console.log("addedOrder", addedOrder);
-    return addedOrder;
+    const order_lines = newOrderData.order_lines;
+    const newOrder: Partial<OrderWithLines> = { ...newOrderData };
+    delete newOrder.order_lines;
+
+    const addedOrder = await OrderRepo.create(newOrder);
+
+    const newOrderLines = order_lines.map((line) => {
+      return { ...line, order_id: addedOrder.id };
+    });
+    const addedOrderLinesPromises = newOrderLines.map((line) => {
+      return OrderLineRepo.create(line);
+    });
+
+    await Promise.all(addedOrderLinesPromises).catch((error) => {
+      throw new ErrorWithStatus(500, "Something went wrong: " + error.message);
+    });
+
+    return { ...addedOrder, order_lines: newOrderLines };
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       throw error;
     }
 
-    throw new ErrorWithStatus(500, "Something went wrong");
+    throw new ErrorWithStatus(500, "Something went wrong" + error);
   }
 }
 
 /* ------------------------------- Edit order ------------------------------- */
-async function editOrder(orderId: number, newOrderData: Partial<OrderSchema>) {
-  const { user_id, product_id, quantity } = newOrderData;
-
-  if (!user_id || !product_id || !quantity) {
-    throw new ErrorWithStatus(400, "User ID, product ID and quantity are required");
-  }
-
+async function edit(newOrderData: OrderWithLines) {
   try {
-    const editedOrder = await OrderQueries.editOrder(orderId, newOrderData);
-    return editedOrder;
+    const orderLines = newOrderData.order_lines;
+    // get the existing order
+    const existingOrder = await OrderRepo.findOneById(newOrderData.id);
+    if (!existingOrder) {
+      throw new ErrorWithStatus(404, "Order not found");
+    }
+    const newOrder: Partial<OrderWithLines> = { ...existingOrder, ...newOrderData };
+    delete newOrder.order_lines;
+
+    const editedOrder = await OrderRepo.update(newOrder);
+
+    // todo partial order line update
+    const editedOrderLinesPromises = orderLines.map((line) => {
+      return OrderLineRepo.update(line);
+    });
+
+    await Promise.all(editedOrderLinesPromises).catch((error) => {
+      throw new ErrorWithStatus(500, "Something went wrong" + error);
+    });
+
+    return { ...editedOrder, order_lines: orderLines };
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       throw error;
@@ -72,8 +100,8 @@ async function editOrder(orderId: number, newOrderData: Partial<OrderSchema>) {
 }
 
 /* ----------------------------- Delete order ------------------------------ */
-async function deleteOrder(orderId: number) {
-  await OrderQueries.deleteOrder(orderId);
+async function remove(orderId: number) {
+  await OrderRepo.delete(orderId);
 
   return;
 }

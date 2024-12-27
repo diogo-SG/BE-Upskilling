@@ -1,0 +1,15 @@
+import OrderLineEntity from "../../entities/orders/OrderLineEntity";
+import BaseRepository from "../BaseRepository";
+
+export class OrderLineRepository extends BaseRepository<OrderLineEntity> {
+  constructor() {
+    super(OrderLineEntity);
+  }
+
+  async findAllByOrderId(orderId: number): Promise<OrderLineEntity[]> {
+    const orderLines = await this.repository.find({
+      where: { order_id: orderId },
+    });
+    return orderLines;
+  }
+}
