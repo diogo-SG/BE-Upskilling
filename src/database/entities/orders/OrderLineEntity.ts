@@ -12,7 +12,7 @@ class OrderLineEntity extends BaseEntity {
   @Column({ type: "int", nullable: false })
   order_id!: number;
 
-  @OneToOne(() => ProductEntity, (product) => product.id)
+  @ManyToOne(() => ProductEntity, (product) => product.id)
   @JoinColumn({ name: "product_id" })
   product!: ProductEntity;
 

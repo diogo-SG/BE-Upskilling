@@ -12,6 +12,7 @@ class OrderEntity extends BaseEntity {
   @Column({ type: "int", nullable: false })
   user_id!: number;
 
+  // todo make enum
   @Column({ type: "varchar", length: 100, nullable: false })
   status!: string;
 

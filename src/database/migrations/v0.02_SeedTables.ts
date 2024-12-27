@@ -1,5 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
+//todo improve
 export class v0_02_SeedTables1734540142083 implements MigrationInterface {
   /* -------------------------------------------------------------------------- */
   /*                            Initial table seeding                           */
@@ -16,14 +17,12 @@ export class v0_02_SeedTables1734540142083 implements MigrationInterface {
           email: "johndoe@sharklasers.com",
           password: "password",
           username: "johndoe",
-          orders: [1],
         },
         {
           name: "Jane Doe",
           email: "janedoe@sharklasers.com",
           password: "password",
           username: "janedoe",
-          orders: [2, 3],
         },
       ])
       .execute();

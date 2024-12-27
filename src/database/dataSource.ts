@@ -14,7 +14,8 @@ const dataSource = new DataSource({
   password: process.env.DB_PASSWORD || "password",
   database: process.env.DB_NAME || "postgres",
   port: parseInt(port),
-  // synchronize: true,
+  // should be disabled in production
+  synchronize: true,
   migrations,
   entities: [UserEntity, OrderEntity, OrderLineEntity, ProductEntity],
 });

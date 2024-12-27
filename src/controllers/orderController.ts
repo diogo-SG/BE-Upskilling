@@ -53,7 +53,7 @@ async function addNew(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 
-  const data = matchedData(req) as EntityNoMetadata<OrderEntity>;
+  const data = matchedData(req) as EntityNoMetadata<OrderWithLines>;
 
   const newOrder = await OrderService.addNew(data);
   res.status(201).json(newOrder);

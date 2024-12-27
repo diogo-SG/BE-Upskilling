@@ -1,4 +1,3 @@
-import { DataSource } from "typeorm";
 import ProductEntity from "../../entities/products/ProductEntity";
 import BaseRepository from "../BaseRepository";
 

@@ -1,4 +1,5 @@
 import BaseEntity from "../entities/BaseEntity";
+import OrderEntity from "../entities/orders/OrderEntity";
 import OrderLineEntity from "../entities/orders/OrderLineEntity";
 
 /* -------------------------------------------------------------------------- */
@@ -10,10 +11,7 @@ export type EntityNoMetadata<T extends BaseEntity> = Omit<T, "id" | "created_at"
 /*                            Compound entity types                           */
 /* -------------------------------------------------------------------------- */
 
-export interface OrderWithLines {
-  id: number;
-  user_id: number;
-  status: string;
+export interface OrderWithLines extends OrderEntity {
   order_lines: OrderLineEntity[];
 }
 

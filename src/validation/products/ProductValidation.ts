@@ -19,6 +19,12 @@ const addNew: Schema = {
       errorMessage: "Price must be a number",
     },
   },
+  stock: {
+    in: ["body"],
+    isNumeric: {
+      errorMessage: "Stock must be a number",
+    },
+  },
 };
 
 export const edit: Schema = {

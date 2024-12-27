@@ -11,6 +11,9 @@ class ProductEntity extends BaseEntity {
 
   @Column({ type: "int", nullable: false })
   price!: number;
+
+  @Column({ type: "int", nullable: false })
+  stock!: number;
 }
 
 export default ProductEntity;
