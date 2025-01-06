@@ -1,20 +1,17 @@
 import UserRepository from "../database/repositories/Users/UserRepository";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import * as jwt from "jsonwebtoken";
+import { signJWT } from "../utils/jwt-utils";
 
 const AuthService = {
   login,
   logout,
-  generateAccessToken,
 };
 
 const UserRepo = new UserRepository();
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "secret";
 
-function generateAccessToken(email: string, password: string) {
-  return jwt.sign({ email, password }, ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
-}
-
+/* -------------------------------------------------------------------------- */
+/*                                Auth handling                               */
+/* -------------------------------------------------------------------------- */
 async function login(email: string, password: string) {
   // implement more authentication logic here
 
@@ -28,7 +25,7 @@ async function login(email: string, password: string) {
     throw new ErrorWithStatus(401, "Invalid email or password");
   }
 
-  const accessToken = generateAccessToken(email, password);
+  const accessToken = signJWT({ email, id: Number(user.id) }, "1h");
 
   return accessToken;
 }

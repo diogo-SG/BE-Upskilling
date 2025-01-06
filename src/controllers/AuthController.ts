@@ -2,9 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import AuthService from "../services/AuthService";
 import { validationResult } from "express-validator";
 import { ErrorWithStatus } from "../middleware/errorHandler";
+import { AuthedRequest } from "../utils/jwt-utils";
 const AuthController = {
   login,
   logout,
+  getSession,
 };
 
 async function login(req: Request, res: Response, next: NextFunction) {
@@ -16,7 +18,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
 
   const accessToken = await AuthService.login(email, password);
 
-  res.cookie("access_token", accessToken, {
+  res.cookie("accessToken", accessToken, {
     httpOnly: true,
     sameSite: "strict",
     secure: true,
@@ -25,7 +27,21 @@ async function login(req: Request, res: Response, next: NextFunction) {
   res.status(200).json({ message: "Login successful" });
 }
 
-async function logout(req: Request, res: Response, next: NextFunction) {
+async function getSession(req: Request, res: Response, next: NextFunction) {
+  const { user } = req as AuthedRequest;
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  res.status(200).json({ user });
+}
+
+async function logout(req: AuthedRequest, res: Response, next: NextFunction) {
+  res.cookie("accessToken", "", {
+    httpOnly: true,
+    maxAge: 0,
+  });
+
   res.status(200).json({ message: "Logout successful" });
 }
 

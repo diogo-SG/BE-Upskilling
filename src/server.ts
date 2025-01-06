@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import UserRouter from "./routes/users/UserRoutes";
 import OrderRouter from "./routes/orders/OrderRoutes";
 import ProductRouter from "./routes/products/ProductRoutes";
@@ -7,14 +8,29 @@ import logger from "./middleware/logger";
 import errorHandler from "./middleware/errorHandler";
 import catchAllError from "./middleware/catchAllError";
 import dataSource from "./database/dataSource";
+import deserializeUser from "./middleware/deserializeUser";
 
 const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+/* -------------------------------------------------------------------------- */
+/*                                 Middleware                                 */
+/* -------------------------------------------------------------------------- */
+
+// Enable logging
+app.use(logger);
+
+// Error handling
+app.use(catchAllError);
+app.use(errorHandler);
+
 // Enable body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(cookieParser());
+app.use(deserializeUser);
 
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
@@ -27,17 +43,6 @@ app.use("/api/products", ProductRouter);
 app.get("/", (req, res) => {
   res.send("Hello world!");
 });
-
-/* -------------------------------------------------------------------------- */
-/*                                 Middleware                                 */
-/* -------------------------------------------------------------------------- */
-
-// Enable logging
-app.use(logger);
-
-// Error handling
-app.use(catchAllError);
-app.use(errorHandler);
 
 /* -------------------------------------------------------------------------- */
 /*                       Start db connection and server                       */
