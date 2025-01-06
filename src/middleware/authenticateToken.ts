@@ -25,3 +25,5 @@ function authenticateToken(req: AuthedRequest, res: Response, next: NextFunction
     next();
   });
 }
+
+export default authenticateToken;

@@ -5,10 +5,15 @@ import * as jwt from "jsonwebtoken";
 const AuthService = {
   login,
   logout,
+  generateAccessToken,
 };
 
 const UserRepo = new UserRepository();
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "secret";
+
+function generateAccessToken(email: string, password: string) {
+  return jwt.sign({ email, password }, ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+}
 
 async function login(email: string, password: string) {
   // implement more authentication logic here
@@ -23,7 +28,7 @@ async function login(email: string, password: string) {
     throw new ErrorWithStatus(401, "Invalid email or password");
   }
 
-  const accessToken = jwt.sign({ email: user.email }, ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+  const accessToken = generateAccessToken(email, password);
 
   return accessToken;
 }
