@@ -4,6 +4,7 @@ import UserValidation from "../../validation/users/UserValidation";
 import GenericValidation from "../../validation/GenericValidation";
 import { checkSchema } from "express-validator";
 import UserOrderRouter from "./userOrders/UserOrderRoutes";
+import { requireAuth } from "../../middleware/requireAuth";
 
 const UserRouter = express.Router();
 UserRouter.use("/:id/orders", UserOrderRouter);

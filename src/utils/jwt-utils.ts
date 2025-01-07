@@ -11,12 +11,6 @@ export interface RefreshTokenPayload extends jwt.JwtPayload {
   sessionId: number;
 }
 
-export interface AuthedRequest extends Request {
-  user?: { email: string; id: number };
-  token?: string;
-  cookies: { [key: string]: string };
-}
-
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET ?? "secret";
 
 /* -------------------------------------------------------------------------- */

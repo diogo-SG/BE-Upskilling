@@ -3,6 +3,7 @@ import { checkSchema } from "express-validator";
 import OrderController from "../../controllers/OrderController";
 import OrderValidation from "../../validation/orders/OrderValidation";
 import GenericValidation from "../../validation/GenericValidation";
+import { requireAuth } from "../../middleware/requireAuth";
 
 const OrderRouter = express.Router();
 
@@ -11,18 +12,18 @@ OrderRouter.get("/", checkSchema(GenericValidation.getAll), OrderController.getA
 
 /* ----------------------------- Single order ----------------------------- */
 
-OrderRouter.get("/:id", checkSchema(GenericValidation.getSingleById), OrderController.getSingleById);
+OrderRouter.get("/:id", requireAuth, checkSchema(GenericValidation.getSingleById), OrderController.getSingleById);
 
 /* ------------------------------ Add order ------------------------------ */
 
-OrderRouter.post("/", checkSchema(OrderValidation.addNew), OrderController.addNew);
+OrderRouter.post("/", requireAuth, checkSchema(OrderValidation.addNew), OrderController.addNew);
 
 /* ------------------------------ Edit order ----------------------------- */
 
-OrderRouter.put("/:id", checkSchema(OrderValidation.edit), OrderController.edit);
+OrderRouter.put("/:id", requireAuth, checkSchema(OrderValidation.edit), OrderController.edit);
 
 /* ----------------------------- Delete order ---------------------------- */
 
-OrderRouter.delete("/:id", checkSchema(GenericValidation.remove), OrderController.remove);
+OrderRouter.delete("/:id", requireAuth, checkSchema(GenericValidation.remove), OrderController.remove);
 
 export default OrderRouter;

@@ -1,6 +1,7 @@
 import { NextFunction, Response } from "express";
-import { AuthedRequest, signJWT, verifyJWT } from "../utils/jwt-utils";
+import { signJWT, verifyJWT } from "../utils/jwt-utils";
 import SessionRepository from "../database/repositories/Users/Sessions/SessionRepository";
+import { ErrorWithStatus } from "./errorHandler";
 
 const SessionRepo = new SessionRepository();
 
@@ -9,27 +10,28 @@ export const accessTokenMaxAge = {
   ms: 15 * 1000,
 };
 
-async function deserializeUser(req: AuthedRequest, res: Response, next: NextFunction) {
+async function deserializeUser(req: Request, res: Response, next: NextFunction) {
+  //@ts-ignore
   const { accessToken, refreshToken } = req.cookies;
 
   if (!accessToken) {
     if (!refreshToken) {
-      return next();
+      return next(new ErrorWithStatus(401, "Unauthorized"));
     }
   }
 
   const { payload, expired } = verifyJWT(accessToken);
 
   if (payload) {
-    req.user = payload as any;
+    //@ts-ignore
+    req.user = payload;
     return next();
   }
 
   // todo type any
   const { payload: refreshPayload, expired: refreshExpired }: any =
     expired && refreshToken ? verifyJWT(refreshToken) : { payload: null };
-  console.log(refreshPayload, "refreshPayload");
-  console.log(payload, "payload");
+
   if (!refreshPayload) {
     return next();
   }
@@ -47,6 +49,7 @@ async function deserializeUser(req: AuthedRequest, res: Response, next: NextFunc
     secure: true,
   });
 
+  //@ts-ignore
   req.user = verifyJWT(newAccessToken).payload as any;
 
   return next();

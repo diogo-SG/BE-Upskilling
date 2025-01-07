@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import AuthService from "../services/AuthService";
 import { matchedData, validationResult } from "express-validator";
 import { ErrorWithStatus } from "../middleware/errorHandler";
-import { AuthedRequest } from "../utils/jwt-utils";
 import { accessTokenMaxAge } from "../middleware/deserializeUser";
 import { EntityNoMetadata } from "../database/types/types";
 import UserEntity from "../database/entities/users/UserEntity";
@@ -88,8 +87,9 @@ async function login(req: Request, res: Response, next: NextFunction) {
 
 /* --------------------------------- Logout --------------------------------- */
 
-async function logout(req: AuthedRequest, res: Response, next: NextFunction) {
+async function logout(req: Request, res: Response, next: NextFunction) {
   try {
+    //@ts-ignore
     const { user } = req;
 
     if (!user) {
