@@ -26,8 +26,9 @@ async function login(email: string, password: string) {
   }
 
   const accessToken = signJWT({ email, id: Number(user.id) }, "1h");
+  const refreshToken = signJWT({ email, id: Number(user.id) }, "1y");
 
-  return accessToken;
+  return { accessToken, refreshToken };
 }
 
 //todo

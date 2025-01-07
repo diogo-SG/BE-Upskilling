@@ -14,23 +14,11 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
-/* -------------------------------------------------------------------------- */
-/*                                 Middleware                                 */
-/* -------------------------------------------------------------------------- */
-
-// Enable logging
-app.use(logger);
-
-// Error handling
-app.use(catchAllError);
-app.use(errorHandler);
-
 // Enable body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
-app.use(deserializeUser);
 
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
@@ -43,6 +31,19 @@ app.use("/api/products", ProductRouter);
 app.get("/", (req, res) => {
   res.send("Hello world!");
 });
+
+/* -------------------------------------------------------------------------- */
+/*                                 Middleware                                 */
+/* -------------------------------------------------------------------------- */
+
+// Enable logging
+app.use(logger);
+
+// Error handling
+app.use(catchAllError);
+app.use(errorHandler);
+
+app.use(deserializeUser);
 
 /* -------------------------------------------------------------------------- */
 /*                       Start db connection and server                       */
