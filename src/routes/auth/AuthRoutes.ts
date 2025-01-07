@@ -9,11 +9,16 @@ const AuthRouter = express.Router();
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
 
+/* --------------------------------- Signup --------------------------------- */
+
+// AuthRouter.post("/signup", checkSchema(GenericValidation.signup), AuthController.signup);
+
 /* ------------------------------- Login user ------------------------------ */
 
 AuthRouter.post("/login", checkSchema(GenericValidation.login), AuthController.login);
 
 /* --------------------------------- Logout --------------------------------- */
 
-AuthRouter.post("/logout", AuthController.logout);
+AuthRouter.post("/logout", checkSchema(GenericValidation.logout), AuthController.logout);
+
 export default AuthRouter;

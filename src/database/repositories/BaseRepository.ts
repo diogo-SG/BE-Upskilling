@@ -20,6 +20,14 @@ abstract class BaseRepository<T extends BaseEntity> {
 
   async findAll(limit?: number): Promise<T[]> {
     const entries = await this.repository.find({
+      take: limit ? limit : 100,
+    });
+    return entries;
+  }
+
+  async findAllBy(filter: FindOptionsWhere<T>, limit?: number): Promise<T[]> {
+    const entries = await this.repository.find({
+      where: filter,
       take: limit,
     });
     return entries;

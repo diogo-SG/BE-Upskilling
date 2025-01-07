@@ -43,11 +43,21 @@ const login: Schema = {
   },
 };
 
+const logout: Schema = {
+  userId: {
+    in: ["body"],
+    isNumeric: {
+      errorMessage: "ID must be a number",
+    },
+  },
+};
+
 const GenericValidation = {
   getAll,
   getSingleById,
   remove,
   login,
+  logout,
 };
 
 export default GenericValidation;

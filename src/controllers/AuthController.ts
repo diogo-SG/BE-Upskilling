@@ -3,6 +3,8 @@ import AuthService from "../services/AuthService";
 import { validationResult } from "express-validator";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import { AuthedRequest } from "../utils/jwt-utils";
+import { accessTokenMaxAge } from "../middleware/deserializeUser";
+
 const AuthController = {
   login,
   logout,
@@ -20,6 +22,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
   const { accessToken, refreshToken } = await AuthService.login(email, password);
 
   res.cookie("accessToken", accessToken, {
+    maxAge: accessTokenMaxAge.ms,
     httpOnly: true,
     sameSite: "strict",
     secure: true,
@@ -45,12 +48,29 @@ async function getSession(req: Request, res: Response, next: NextFunction) {
 }
 
 async function logout(req: AuthedRequest, res: Response, next: NextFunction) {
-  res.cookie("accessToken", "", {
-    httpOnly: true,
-    maxAge: 0,
-  });
+  try {
+    const { user } = req;
 
-  res.status(200).json({ message: "Logout successful" });
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    } else {
+      await AuthService.logout(user.id);
+
+      res.cookie("accessToken", "", {
+        httpOnly: true,
+        maxAge: 0,
+      });
+      res.cookie("refreshToken", "", {
+        httpOnly: true,
+        maxAge: 0,
+      });
+
+      res.status(200).json({ message: "Logout successful" });
+    }
+  } catch (error) {
+    console.log(error, "error");
+    next(error);
+  }
 }
 
 export default AuthController;

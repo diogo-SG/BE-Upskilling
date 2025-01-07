@@ -1,4 +1,6 @@
+import SessionRepository from "../database/repositories/Users/Sessions/SessionRepository";
 import UserRepository from "../database/repositories/Users/UserRepository";
+import { accessTokenMaxAge } from "../middleware/deserializeUser";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import { signJWT } from "../utils/jwt-utils";
 
@@ -8,6 +10,7 @@ const AuthService = {
 };
 
 const UserRepo = new UserRepository();
+const SessionRepo = new SessionRepository();
 
 /* -------------------------------------------------------------------------- */
 /*                                Auth handling                               */
@@ -25,14 +28,23 @@ async function login(email: string, password: string) {
     throw new ErrorWithStatus(401, "Invalid email or password");
   }
 
-  const accessToken = signJWT({ email, id: Number(user.id) }, "1h");
-  const refreshToken = signJWT({ email, id: Number(user.id) }, "1y");
+  const session = await SessionRepo.create({ userId: user.id, isValid: true });
+  const accessToken = signJWT({ userId: Number(user.id), sessionId: session.id }, accessTokenMaxAge.expiresIn);
+  const refreshToken = signJWT({ sessionId: session.id }, "1y");
 
   return { accessToken, refreshToken };
 }
 
-//todo
-async function logout() {
+async function logout(userId: number) {
+  try {
+    // invalidate session
+    const sessions = await SessionRepo.findAllBy({ userId, isValid: true });
+    await Promise.all(sessions.map((session) => SessionRepo.update({ ...session, isValid: false })));
+  } catch (error) {
+    console.log(error);
+    throw new ErrorWithStatus(500, "Error logging out");
+  }
+
   return { message: "Logout successful" };
 }
 

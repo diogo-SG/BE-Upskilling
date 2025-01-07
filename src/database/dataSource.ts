@@ -4,6 +4,7 @@ import UserEntity from "./entities/users/UserEntity";
 import OrderEntity from "./entities/orders/OrderEntity";
 import OrderLineEntity from "./entities/orders/OrderLineEntity";
 import ProductEntity from "./entities/products/ProductEntity";
+import SessionEntity from "./entities/users/sessions/SessionEntity";
 
 const port = process.env.DB_PORT || "5433";
 
@@ -17,7 +18,7 @@ const dataSource = new DataSource({
   // should be disabled in production
   synchronize: true,
   migrations,
-  entities: [UserEntity, OrderEntity, OrderLineEntity, ProductEntity],
+  entities: [UserEntity, OrderEntity, OrderLineEntity, ProductEntity, SessionEntity],
 });
 
 export default dataSource;
