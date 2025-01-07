@@ -1,32 +1,5 @@
 import { Schema } from "express-validator";
 
-const addNew: Schema = {
-  name: {
-    in: ["body"],
-    isString: {
-      errorMessage: "Name must be a string",
-    },
-  },
-  email: {
-    in: ["body"],
-    isEmail: {
-      errorMessage: "Email is invalid",
-    },
-  },
-  password: {
-    in: ["body"],
-    isString: {
-      errorMessage: "Password must be a string",
-    },
-  },
-  username: {
-    in: ["body"],
-    isString: {
-      errorMessage: "Username must be a string",
-    },
-  },
-};
-
 export const edit: Schema = {
   id: {
     in: ["params"],
@@ -80,7 +53,6 @@ export const edit: Schema = {
 /* -------------------------------------------------------------------------- */
 
 const UserValSchemas = {
-  addNew,
   edit,
 };
 

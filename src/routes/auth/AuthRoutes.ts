@@ -1,7 +1,7 @@
 import express from "express";
 import { checkSchema } from "express-validator";
 import AuthController from "../../controllers/AuthController";
-import GenericValidation from "../../validation/GenericValidation";
+import AuthValidation from "../../validation/auth/AuthValidation";
 
 const AuthRouter = express.Router();
 
@@ -11,14 +11,14 @@ const AuthRouter = express.Router();
 
 /* --------------------------------- Signup --------------------------------- */
 
-// AuthRouter.post("/signup", checkSchema(GenericValidation.signup), AuthController.signup);
+AuthRouter.post("/signup", checkSchema(AuthValidation.signup), AuthController.signup);
 
 /* ------------------------------- Login user ------------------------------ */
 
-AuthRouter.post("/login", checkSchema(GenericValidation.login), AuthController.login);
+AuthRouter.post("/login", checkSchema(AuthValidation.login), AuthController.login);
 
 /* --------------------------------- Logout --------------------------------- */
 
-AuthRouter.post("/logout", checkSchema(GenericValidation.logout), AuthController.logout);
+AuthRouter.post("/logout", checkSchema(AuthValidation.logout), AuthController.logout);
 
 export default AuthRouter;

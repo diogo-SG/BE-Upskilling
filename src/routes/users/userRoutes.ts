@@ -19,10 +19,6 @@ UserRouter.get("/", checkSchema(GenericValidation.getAll), UserController.getAll
 
 UserRouter.get("/:id", checkSchema(GenericValidation.getSingleById), UserController.getSingleById);
 
-/* ------------------------------ Add user ------------------------------- */
-
-UserRouter.post("/", checkSchema(UserValidation.addNew), UserController.addNew);
-
 /* ------------------------------ Edit user ------------------------------ */
 
 UserRouter.put("/:id", checkSchema(UserValidation.edit), UserController.edit);

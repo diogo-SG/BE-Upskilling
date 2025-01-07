@@ -12,7 +12,6 @@ import { EntityNoMetadata } from "../database/types/types";
 const UserController = {
   getAll,
   getSingleById,
-  addNew,
   edit,
   remove,
   getAllOrders,
@@ -64,40 +63,6 @@ async function getSingleById(req: Request, res: Response, next: NextFunction) {
 
   // 200 OK = Generic success response
   res.status(200).json(user);
-}
-
-/* ------------------------------ Add new user ------------------------------ */
-
-/** Adds a new user
- * @returns - a JSON response with the new user
- * @throws - a 400 error if the request body is invalid
- * @example - POST /api/users
- */
-async function addNew(req: Request, res: Response, next: NextFunction) {
-  if (!validationResult(req).isEmpty()) {
-    const errorsList = validationResult(req).array();
-
-    // We could make this look much nicer but I'm lazy and don't think it's worth the time investment atm
-    const errorMsg = errorsList
-      .map((error) => {
-        if (error.type === "field") {
-          return `${error.path}: ${error.msg}`;
-        }
-      })
-      .join("; ");
-    const error = new ErrorWithStatus(400, errorMsg);
-    next(error);
-  }
-  const data = matchedData(req) as EntityNoMetadata<UserEntity>;
-
-  try {
-    const newUser = await UsersService.addNew(data);
-    console.log(newUser);
-    // 201 Created = We created a new resource
-    res.status(201).json(newUser);
-  } catch (error) {
-    next(error);
-  }
 }
 
 /* -------------------------------- Edit user ------------------------------- */

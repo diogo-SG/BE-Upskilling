@@ -28,36 +28,10 @@ const remove: Schema = {
   },
 };
 
-const login: Schema = {
-  email: {
-    in: ["body"],
-    isEmail: {
-      errorMessage: "Email must be a valid email address",
-    },
-  },
-  password: {
-    in: ["body"],
-    isString: {
-      errorMessage: "Password must be a string",
-    },
-  },
-};
-
-const logout: Schema = {
-  userId: {
-    in: ["body"],
-    isNumeric: {
-      errorMessage: "ID must be a number",
-    },
-  },
-};
-
 const GenericValidation = {
   getAll,
   getSingleById,
   remove,
-  login,
-  logout,
 };
 
 export default GenericValidation;
