@@ -7,10 +7,10 @@ import GenericValidation from "../../../validation/GenericValidation";
 /*                                 User orders                                */
 /* -------------------------------------------------------------------------- */
 
-const userOrderRouter = express.Router({ mergeParams: true });
+const UserOrderRouter = express.Router({ mergeParams: true });
 
 /* --------------------------- All orders for user -------------------------- */
 
-userOrderRouter.get("/", checkSchema(GenericValidation.getAll), UserController.getAll);
+UserOrderRouter.get("/", checkSchema(GenericValidation.getAll), UserController.getAll);
 
-export default userOrderRouter;
+export default UserOrderRouter;
