@@ -3,7 +3,6 @@ import { ErrorWithStatus } from "../middleware/errorHandler";
 import UsersService from "../services/UserService";
 import { matchedData, validationResult } from "express-validator";
 import UserEntity from "../database/entities/users/UserEntity";
-import { EntityNoMetadata } from "../database/types/types";
 
 /* -------------------------------------------------------------------------- */
 /*                               User Controller                              */

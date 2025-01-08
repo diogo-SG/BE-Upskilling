@@ -1,7 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import UserRouter from "./routes/users/UserRoutes";
-import OrderRouter from "./routes/orders/OrderRoutes";
 import ProductRouter from "./routes/products/ProductRoutes";
 import AuthRouter from "./routes/auth/AuthRoutes";
 import logger from "./middleware/logger";
@@ -9,6 +8,7 @@ import errorHandler from "./middleware/errorHandler";
 import catchAllError from "./middleware/catchAllError";
 import dataSource from "./database/dataSource";
 import deserializeUser from "./middleware/deserializeUser";
+import OrderRouter from "./routes/orders/OrderRoutes";
 
 const PORT = process.env.PORT || 8080;
 
