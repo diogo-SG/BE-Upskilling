@@ -3,8 +3,7 @@ import UserController from "../../controllers/UserController";
 import UserValidation from "../../validation/users/UserValidation";
 import GenericValidation from "../../validation/GenericValidation";
 import { checkSchema } from "express-validator";
-import UserOrderRouter from "./userOrders/UserOrderRoutes";
-import { requireAuth } from "../../middleware/requireAuth";
+import UserOrderRouter from "./UserOrders/UserOrderRoutes";
 
 const UserRouter = express.Router();
 UserRouter.use("/:id/orders", UserOrderRouter);
