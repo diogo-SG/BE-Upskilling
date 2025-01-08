@@ -23,7 +23,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
-app.use(deserializeUser);
 
 // Enable logging
 app.use(logger);
@@ -32,6 +31,10 @@ app.use(logger);
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
 app.use("/auth", AuthRouter);
+
+// todo create api router, move this middleware inside it
+app.use(deserializeUser);
+
 app.use("/api/users", UserRouter);
 app.use("/api/orders", OrderRouter);
 app.use("/api/products", ProductRouter);
