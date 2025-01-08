@@ -1,5 +1,5 @@
 import { Column, Entity } from "typeorm";
-import BaseEntity from "../BaseEntity.ts";
+import BaseEntity from "../BaseEntity";
 
 @Entity("products")
 class ProductEntity extends BaseEntity {
