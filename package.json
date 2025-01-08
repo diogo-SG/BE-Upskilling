@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
-    "migrate": "pnpm typeorm migration:run -- -d ./src/database/migrations"
+    "migrate": "pnpm typeorm migration:run -- -d ./src/database/dataSource"
   },
   "repository": {
     "type": "git",
@@ -36,5 +36,6 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
     "typeorm": "^0.3.20"
-  }
+  },
+  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a"
 }
