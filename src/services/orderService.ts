@@ -45,6 +45,7 @@ async function addNew(newOrderData: EntityNoMetadata<OrderWithLines>) {
 
     const addedOrder = await OrderRepo.create(newOrder);
 
+    // todo: insert all order lines in a single query
     const newOrderLines = order_lines.map((line) => {
       return { ...line, order_id: addedOrder.id };
     });
