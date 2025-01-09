@@ -76,15 +76,6 @@ async function login(req: Request, res: Response, next: NextFunction) {
   res.status(200).json({ message: "Login successful" });
 }
 
-// async function getSession(req: Request, res: Response, next: NextFunction) {
-//   const { user } = req as AuthedRequest;
-//   if (!user) {
-//     return res.status(401).json({ message: "Unauthorized" });
-//   }
-
-//   res.status(200).json({ user });
-// }
-
 /* --------------------------------- Logout --------------------------------- */
 
 async function logout(req: Request, res: Response, next: NextFunction) {
@@ -92,22 +83,18 @@ async function logout(req: Request, res: Response, next: NextFunction) {
     //@ts-ignore
     const { user } = req;
 
-    if (!user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    } else {
-      await AuthService.logout(user.id);
+    await AuthService.logout(user.id);
 
-      res.cookie("accessToken", "", {
-        httpOnly: true,
-        maxAge: 0,
-      });
-      res.cookie("refreshToken", "", {
-        httpOnly: true,
-        maxAge: 0,
-      });
+    res.cookie("accessToken", "", {
+      httpOnly: true,
+      maxAge: 0,
+    });
+    res.cookie("refreshToken", "", {
+      httpOnly: true,
+      maxAge: 0,
+    });
 
-      res.status(200).json({ message: "Logout successful" });
-    }
+    res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.log(error, "error");
     next(error);

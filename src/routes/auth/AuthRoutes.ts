@@ -2,6 +2,8 @@ import express from "express";
 import { checkSchema } from "express-validator";
 import AuthController from "../../controllers/AuthController";
 import AuthValidation from "../../validation/auth/AuthValidation";
+import deserializeUser from "../../middleware/deserializeUser";
+import { requireAuth } from "../../middleware/requireAuth";
 
 const AuthRouter = express.Router();
 
@@ -19,6 +21,6 @@ AuthRouter.post("/login", checkSchema(AuthValidation.login), AuthController.logi
 
 /* --------------------------------- Logout --------------------------------- */
 
-AuthRouter.post("/logout", checkSchema(AuthValidation.logout), AuthController.logout);
+AuthRouter.post("/logout", checkSchema(AuthValidation.logout), deserializeUser, requireAuth, AuthController.logout);
 
 export default AuthRouter;

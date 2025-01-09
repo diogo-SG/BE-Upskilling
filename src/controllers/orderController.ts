@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import { matchedData, validationResult } from "express-validator";
-import { EntityNoMetadata, isArrayOfNumbers, OrderWithLines } from "../database/types/types";
+import { EntityNoMetadata, OrderWithLines } from "../database/types/types";
 import OrderService from "../services/OrderService";
 
 /* -------------------------------------------------------------------------- */

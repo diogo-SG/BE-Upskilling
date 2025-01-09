@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 import { signJWT, verifyJWT } from "../utils/jwt-utils";
 import SessionRepository from "../database/repositories/Users/Sessions/SessionRepository";
 import { ErrorWithStatus } from "./errorHandler";

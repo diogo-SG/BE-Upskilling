@@ -1,49 +1,39 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
-//todo improve
-export class v0_02_SeedTables1734540142083 implements MigrationInterface {
+export class v0_04_SeedTables1734540142085 implements MigrationInterface {
   /* -------------------------------------------------------------------------- */
   /*                            Initial table seeding                           */
   /* -------------------------------------------------------------------------- */
   public async up(queryRunner: QueryRunner): Promise<void> {
-    /* ---------------------------------- Users --------------------------------- */
+    /* ------------------------------ Order lines ------------------------------ */
     await queryRunner.manager
       .createQueryBuilder()
       .insert()
-      .into("users")
+      .into("order_lines")
       .values([
+        /* --------------------------------- Order 1 -------------------------------- */
         {
-          name: "John Doe",
-          email: "johndoe@sharklasers.com",
-          password: "password",
-          username: "johndoe",
+          order_id: 1,
+          product_id: 1,
+          quantity: 1,
         },
         {
-          name: "Jane Doe",
-          email: "janedoe@sharklasers.com",
-          password: "password",
-          username: "janedoe",
+          order_id: 1,
+          product_id: 2,
+          quantity: 4,
         },
-      ])
-      .execute();
-
-    /* -------------------------------- Products -------------------------------- */
-    await queryRunner.manager
-      .createQueryBuilder()
-      .insert()
-      .into("products")
-      .values([
+        /* --------------------------------- Order 2 -------------------------------- */
+        { order_id: 2, product_id: 1, quantity: 2 },
         {
-          name: "Rocket Launcher",
-          description: "It shoots rockets",
-          price: 20394012,
-          stock: 100,
+          order_id: 2,
+          product_id: 2,
+          quantity: 5,
         },
+        /* --------------------------------- Order 3 -------------------------------- */
         {
-          name: "Air Fryer",
-          description: "For when you need some air fried",
-          price: 324234,
-          stock: 200,
+          order_id: 3,
+          product_id: 1,
+          quantity: 3,
         },
       ])
       .execute();

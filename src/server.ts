@@ -1,14 +1,12 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import UserRouter from "./routes/users/UserRoutes";
-import ProductRouter from "./routes/products/ProductRoutes";
+
 import AuthRouter from "./routes/auth/AuthRoutes";
 import logger from "./middleware/logger";
 import errorHandler from "./middleware/errorHandler";
 import catchAllError from "./middleware/catchAllError";
 import dataSource from "./database/dataSource";
-import deserializeUser from "./middleware/deserializeUser";
-import OrderRouter from "./routes/orders/OrderRoutes";
+import ApiRouter from "./routes/api/ApiRoutes";
 
 const PORT = process.env.PORT || 8080;
 
@@ -30,18 +28,13 @@ app.use(logger);
 /* -------------------------------------------------------------------------- */
 /*                                   Routes                                   */
 /* -------------------------------------------------------------------------- */
-app.use("/auth", AuthRouter);
-
-// todo create api router, move this middleware inside it
-app.use(deserializeUser);
-
-app.use("/api/users", UserRouter);
-app.use("/api/orders", OrderRouter);
-app.use("/api/products", ProductRouter);
 
 app.get("/", (req, res) => {
-  res.send("Hello world!");
+  res.send("API is running!");
 });
+
+app.use("/auth", AuthRouter);
+app.use("/api", ApiRouter);
 
 // Error handling
 app.use(errorHandler);

@@ -1,49 +1,30 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
-//todo improve
-export class v0_02_SeedTables1734540142083 implements MigrationInterface {
+export class v0_03_SeedTables1734540142084 implements MigrationInterface {
   /* -------------------------------------------------------------------------- */
   /*                            Initial table seeding                           */
   /* -------------------------------------------------------------------------- */
   public async up(queryRunner: QueryRunner): Promise<void> {
-    /* ---------------------------------- Users --------------------------------- */
+    /* --------------------------------- Orders --------------------------------- */
     await queryRunner.manager
       .createQueryBuilder()
       .insert()
-      .into("users")
+      .into("orders")
       .values([
         {
-          name: "John Doe",
-          email: "johndoe@sharklasers.com",
-          password: "password",
-          username: "johndoe",
+          user_id: 1,
+          order_lines: [1, 2],
+          status: "complete",
         },
         {
-          name: "Jane Doe",
-          email: "janedoe@sharklasers.com",
-          password: "password",
-          username: "janedoe",
-        },
-      ])
-      .execute();
-
-    /* -------------------------------- Products -------------------------------- */
-    await queryRunner.manager
-      .createQueryBuilder()
-      .insert()
-      .into("products")
-      .values([
-        {
-          name: "Rocket Launcher",
-          description: "It shoots rockets",
-          price: 20394012,
-          stock: 100,
+          user_id: 2,
+          order_lines: [3, 4],
+          status: "complete",
         },
         {
-          name: "Air Fryer",
-          description: "For when you need some air fried",
-          price: 324234,
-          stock: 200,
+          user_id: 2,
+          order_lines: [5],
+          status: "pending",
         },
       ])
       .execute();
