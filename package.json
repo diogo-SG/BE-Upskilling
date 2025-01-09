@@ -20,11 +20,14 @@
   },
   "homepage": "https://github.com/diogo-SG/BE-Upskilling#readme",
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.0",
     "@types/pg": "^8.11.10",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.2"
