@@ -83,22 +83,18 @@ async function logout(req: Request, res: Response, next: NextFunction) {
     //@ts-ignore
     const { user } = req;
 
-    if (!user) {
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      await AuthService.logout(user.id);
+    await AuthService.logout(user.id);
 
-      res.cookie("accessToken", "", {
-        httpOnly: true,
-        maxAge: 0,
-      });
-      res.cookie("refreshToken", "", {
-        httpOnly: true,
-        maxAge: 0,
-      });
+    res.cookie("accessToken", "", {
+      httpOnly: true,
+      maxAge: 0,
+    });
+    res.cookie("refreshToken", "", {
+      httpOnly: true,
+      maxAge: 0,
+    });
 
-      res.status(200).json({ message: "Logout successful" });
-    }
+    res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.log(error, "error");
     next(error);
