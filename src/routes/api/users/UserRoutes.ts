@@ -1,7 +1,7 @@
 import express from "express";
-import UserController from "../../controllers/UserController";
-import UserValidation from "../../validation/users/UserValidation";
-import GenericValidation from "../../validation/GenericValidation";
+import UserController from "../../../controllers/UserController";
+import UserValidation from "../../../validation/users/UserValidation";
+import GenericValidation from "../../../validation/GenericValidation";
 import { checkSchema } from "express-validator";
 import UserOrderRouter from "./UserOrders/UserOrderRoutes";
 

@@ -1,8 +1,8 @@
 import express from "express";
 import { checkSchema } from "express-validator";
-import GenericValidation from "../../validation/GenericValidation";
-import ProductController from "../../controllers/ProductController";
-import ProductValidation from "../../validation/products/ProductValidation";
+import GenericValidation from "../../../validation/GenericValidation";
+import ProductController from "../../../controllers/ProductController";
+import ProductValidation from "../../../validation/products/ProductValidation";
 
 const ProductRouter = express.Router();
 

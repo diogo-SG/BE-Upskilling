@@ -76,15 +76,6 @@ async function login(req: Request, res: Response, next: NextFunction) {
   res.status(200).json({ message: "Login successful" });
 }
 
-// async function getSession(req: Request, res: Response, next: NextFunction) {
-//   const { user } = req as AuthedRequest;
-//   if (!user) {
-//     return res.status(401).json({ message: "Unauthorized" });
-//   }
-
-//   res.status(200).json({ user });
-// }
-
 /* --------------------------------- Logout --------------------------------- */
 
 async function logout(req: Request, res: Response, next: NextFunction) {
@@ -93,7 +84,7 @@ async function logout(req: Request, res: Response, next: NextFunction) {
     const { user } = req;
 
     if (!user) {
-      return res.status(401).json({ message: "Unauthorized" });
+      res.status(401).json({ message: "Unauthorized" });
     } else {
       await AuthService.logout(user.id);
 
