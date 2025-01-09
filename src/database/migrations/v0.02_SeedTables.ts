@@ -48,63 +48,63 @@ export class v0_02_SeedTables1734540142083 implements MigrationInterface {
       ])
       .execute();
 
-    // /* --------------------------------- Orders --------------------------------- */
-    // await queryRunner.manager
-    //   .createQueryBuilder()
-    //   .insert()
-    //   .into("orders")
-    //   .values([
-    //     {
-    //       user_id: 1,
-    //       status: "complete",
-    //     },
-    //     {
-    //       user_id: 2,
-    //       status: "complete",
-    //     },
-    //     {
-    //       user_id: 2,
-    //       status: "pending",
-    //     },
-    //   ])
-    //   .execute();
+    /* ------------------------------ Order lines ------------------------------ */
+    await queryRunner.manager
+      .createQueryBuilder()
+      .insert()
+      .into("order_lines")
+      .values([
+        /* --------------------------------- Order 1 -------------------------------- */
+        {
+          order_id: 1,
+          product_id: 1,
+          quantity: 1,
+        },
+        {
+          order_id: 1,
+          product_id: 2,
+          quantity: 4,
+        },
+        /* --------------------------------- Order 2 -------------------------------- */
+        {
+          order_id: 2,
+          product_id: 1,
+          quantity: 2,
+        },
+        {
+          order_id: 2,
+          product_id: 2,
+          quantity: 5,
+        },
+        /* --------------------------------- Order 3 -------------------------------- */
+        {
+          order_id: 3,
+          product_id: 1,
+          quantity: 3,
+        },
+      ])
+      .execute();
 
-    // /* ------------------------------ Order lines ------------------------------ */
-    // await queryRunner.manager
-    //   .createQueryBuilder()
-    //   .insert()
-    //   .into("order_lines")
-    //   .values([
-    //     /* --------------------------------- Order 1 -------------------------------- */
-    //     {
-    //       order_id: 1,
-    //       product_id: 1,
-    //       quantity: 1,
-    //     },
-    //     {
-    //       order_id: 1,
-    //       product_id: 2,
-    //       quantity: 4,
-    //     },
-    //     /* --------------------------------- Order 2 -------------------------------- */
-    //     {
-    //       order_id: 2,
-    //       product_id: 1,
-    //       quantity: 2,
-    //     },
-    //     {
-    //       order_id: 2,
-    //       product_id: 2,
-    //       quantity: 5,
-    //     },
-    //     /* --------------------------------- Order 3 -------------------------------- */
-    //     {
-    //       order_id: 3,
-    //       product_id: 1,
-    //       quantity: 3,
-    //     },
-    //   ])
-    //   .execute();
+    /* --------------------------------- Orders --------------------------------- */
+    await queryRunner.manager
+      .createQueryBuilder()
+      .insert()
+      .into("orders")
+      .values([
+        {
+          user_id: 1,
+          status: "complete",
+        },
+        {
+          user_id: 2,
+          status: "complete",
+        },
+        {
+          user_id: 2,
+          status: "pending",
+        },
+      ])
+      .execute();
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
