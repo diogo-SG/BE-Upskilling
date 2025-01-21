@@ -1,7 +1,6 @@
 import { migrations } from "../database/migrations";
 import { DataSourceOptions } from "typeorm";
 import { createDatabase, dropDatabase } from "typeorm-extension";
-import { DatabaseCreateContext } from "typeorm-extension";
 import OrderEntity from "../database/entities/orders/OrderEntity";
 import OrderLineEntity from "../database/entities/orders/OrderLineEntity";
 import ProductEntity from "../database/entities/products/ProductEntity";
@@ -16,8 +15,8 @@ const dataSourceOpts: DataSourceOptions = {
   password: process.env.DB_PASSWORD || "password",
   database: "test_db",
   port: parseInt(process.env.DB_PORT || "5432"),
+  // synchronize: true,
   dropSchema: true,
-  synchronize: true,
   migrations,
   entities: [UserEntity, OrderEntity, OrderLineEntity, ProductEntity, SessionEntity],
 };

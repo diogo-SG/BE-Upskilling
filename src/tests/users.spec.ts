@@ -1,5 +1,8 @@
-describe("first test", () => {
-  it("should pass", () => {
-    expect(1).toBe(1);
+import UserService from "../services/UserService";
+
+describe("Users", () => {
+  it("should return a list of users", async () => {
+    const users = await UserService.getAll();
+    console.log(users);
   });
 });
