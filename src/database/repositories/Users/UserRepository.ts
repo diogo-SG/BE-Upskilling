@@ -1,8 +1,9 @@
+import { DataSource } from "typeorm";
 import UserEntity from "../../entities/users/UserEntity";
 import BaseRepository from "../BaseRepository";
 
 class UserRepository extends BaseRepository<UserEntity> {
-  constructor() {
+  constructor(dataSource?: DataSource) {
     super(UserEntity);
   }
 

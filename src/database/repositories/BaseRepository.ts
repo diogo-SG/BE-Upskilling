@@ -7,7 +7,7 @@ abstract class BaseRepository<T extends BaseEntity> {
   private entity: EntityTarget<T>;
   public repository: Repository<T>;
 
-  constructor(entity: EntityTarget<T>) {
+  constructor(entity: EntityTarget<T>, baseDataSource: DataSource = dataSource) {
     this.dataSource = dataSource;
     this.entity = entity;
     this.repository = this.dataSource.getRepository(this.entity);
