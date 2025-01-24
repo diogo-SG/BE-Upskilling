@@ -3,107 +3,99 @@ import { ErrorWithStatus } from "../middleware/errorHandler";
 import OrderRepository from "../database/repositories/Orders/OrderRepository";
 import UserEntity from "../database/entities/users/UserEntity";
 import { EntityNoMetadata } from "../database/types/types";
+import { BaseService } from "./BaseService";
+import { DataSource } from "typeorm";
 
 /* -------------------------------------------------------------------------- */
 /*                                Users Service                               */
 /* -------------------------------------------------------------------------- */
-const UserRepo = new UserRepository();
-const OrderRepo = new OrderRepository();
 
-const UserService = {
-  getAll,
-  getOneById,
-  addNew,
-  edit,
-  remove,
-  getAllOrders,
-};
+class UserService extends BaseService {
+  private UserRepo: UserRepository;
+  private OrderRepo: OrderRepository;
 
-/* ------------------------------ Get all users ----------------------------- */
-
-async function getAll(limit?: number) {
-  const users = await UserRepo.findAll(limit);
-  return users;
-}
-
-/* ----------------------------- Get single user ---------------------------- */
-async function getOneById(userId: number) {
-  const user = await UserRepo.findOneById(userId);
-  if (!user) {
-    throw new ErrorWithStatus(404, "User not found");
+  constructor(activeDataSource?: DataSource) {
+    super(activeDataSource);
+    this.UserRepo = new UserRepository(activeDataSource ?? this.dataSource);
+    this.OrderRepo = new OrderRepository(activeDataSource ?? this.dataSource);
   }
-  return user;
-}
 
-/* ------------------------------ Add new user ------------------------------ */
-
-async function addNew(newUserData: EntityNoMetadata<UserEntity>) {
-  const { name, email, password, username } = newUserData;
-
-  try {
-    const emailCheckRes = await UserRepo.findOneByEmail(email);
-    if (emailCheckRes) {
-      throw new ErrorWithStatus(400, "User with this email already exists");
-    }
-
-    const addedUser = await UserRepo.create({ name, email, password, username });
-    return addedUser;
-  } catch (error) {
-    if (error instanceof ErrorWithStatus) {
-      throw error;
-    }
-
-    throw new ErrorWithStatus(500, `Something went wrong: ${error})}`);
+  /* -------------------------------------------------------------------------- */
+  /*                                   Methods                                  */
+  /* -------------------------------------------------------------------------- */
+  async getAll(limit?: number) {
+    const users = await this.UserRepo.findAll(limit);
+    return users;
   }
-}
 
-/* -------------------------------- Edit user ------------------------------- */
-
-async function edit(userData: UserEntity) {
-  try {
-    // todo move this validation to controller
-    let user = await UserRepo.findOneById(userData.id);
+  async getOneById(userId: number) {
+    const user = await this.UserRepo.findOneById(userId);
     if (!user) {
       throw new ErrorWithStatus(404, "User not found");
     }
+    return user;
+  }
 
-    if (userData.email) {
-      let userWithSameEmail = await UserRepo.findOneByEmail(userData.email);
-      if (userWithSameEmail && userWithSameEmail.id !== userData.id) {
+  async addNew(newUserData: EntityNoMetadata<UserEntity>) {
+    const { name, email, password, username } = newUserData;
+
+    try {
+      const emailCheckRes = await this.UserRepo.findOneByEmail(email);
+      if (emailCheckRes) {
         throw new ErrorWithStatus(400, "User with this email already exists");
       }
+
+      const addedUser = await this.UserRepo.create({ name, email, password, username });
+      return addedUser;
+    } catch (error) {
+      if (error instanceof ErrorWithStatus) {
+        throw error;
+      }
+
+      throw new ErrorWithStatus(500, `Something went wrong: ${error})}`);
     }
-
-    const updatedUser = await UserRepo.update(userData);
-    return updatedUser;
-  } catch (error) {
-    console.log(error);
-    throw new ErrorWithStatus(500, "Something went wrong!");
   }
-}
 
-/* ----------------------------- Delete user ------------------------------ */
+  async edit(userData: UserEntity) {
+    try {
+      // todo move this validation to controller
+      let user = await this.UserRepo.findOneById(userData.id);
+      if (!user) {
+        throw new ErrorWithStatus(404, "User not found");
+      }
 
-async function remove(userId: number) {
-  try {
-    const user = await UserRepo.findOneById(userId);
-    if (!user) {
-      throw new ErrorWithStatus(404, "User not found");
+      if (userData.email) {
+        let userWithSameEmail = await this.UserRepo.findOneByEmail(userData.email);
+        if (userWithSameEmail && userWithSameEmail.id !== userData.id) {
+          throw new ErrorWithStatus(400, "User with this email already exists");
+        }
+      }
+
+      const updatedUser = await this.UserRepo.update(userData);
+      return updatedUser;
+    } catch (error) {
+      console.log(error);
+      throw new ErrorWithStatus(500, "Something went wrong!");
     }
-
-    await UserRepo.delete(userId);
-  } catch (error) {
-    throw new ErrorWithStatus(500, "Something went wrong");
   }
-}
 
-/* -------------------------------------------------------------------------- */
-/*                                 User orders                                */
-/* -------------------------------------------------------------------------- */
+  async remove(userId: number) {
+    try {
+      const user = await this.UserRepo.findOneById(userId);
+      if (!user) {
+        throw new ErrorWithStatus(404, "User not found");
+      }
 
-async function getAllOrders(userId: number) {
-  const orders = await OrderRepo.findAllByUserId(userId);
-  return orders;
+      await this.UserRepo.delete(userId);
+    } catch (error) {
+      throw new ErrorWithStatus(500, "Something went wrong");
+    }
+  }
+
+  async getAllOrders(userId: number) {
+    const orders = await this.OrderRepo.findAllByUserId(userId);
+    return orders;
+  }
 }
 
 export default UserService;

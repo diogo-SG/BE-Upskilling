@@ -1,5 +1,5 @@
 import { migrations } from "../database/migrations";
-import { DataSourceOptions } from "typeorm";
+import { DataSource, DataSourceOptions } from "typeorm";
 import { createDatabase, dropDatabase } from "typeorm-extension";
 import OrderEntity from "../database/entities/orders/OrderEntity";
 import OrderLineEntity from "../database/entities/orders/OrderLineEntity";
@@ -13,6 +13,7 @@ const dataSourceOpts: DataSourceOptions = {
   host: process.env.DB_HOST || "localhost",
   username: process.env.DB_USER || "postgres",
   password: process.env.DB_PASSWORD || "password",
+  name: "test",
   database: "test_db",
   port: parseInt(process.env.DB_PORT || "5432"),
   // synchronize: true,
@@ -24,9 +25,11 @@ const dataSourceOpts: DataSourceOptions = {
 export class TestDBHandler {
   private readonly initialDatabase: string;
   private readonly testDatabase = dataSourceOpts.database;
+  public testDataSource: DataSource;
 
   constructor() {
     this.initialDatabase = process.env.DB_NAME || "postgres";
+    this.testDataSource = createDatasource(dataSourceOpts);
   }
 
   async createDB() {
@@ -38,25 +41,24 @@ export class TestDBHandler {
       ifNotExist: false,
     });
 
-    const dataSource = createDatasource(dataSourceOpts);
-    await dataSource.initialize();
+    await this.testDataSource.initialize();
     console.log(`Test database created: ${this.testDatabase}`);
     console.log("Running migrations...");
-    await dataSource.runMigrations();
+    await this.testDataSource.runMigrations();
     console.log("Migrations run successfully");
-    await dataSource.destroy();
     console.log("Test database ready to accept connections");
   }
 
   async dropDB(dropAll = false) {
     console.log(`Dropping test database '${this.testDatabase}'`);
     if (dropAll) {
-      const dataSource = createDatasource(dataSourceOpts);
-      await dataSource.initialize();
-      await dataSource.query(
+      this.testDataSource.initialize();
+      await this.testDataSource.query(
         `SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '${this.testDatabase}';`
       );
     }
+
+    if (this.testDataSource.isInitialized) await this.testDataSource.destroy();
     await dropDatabase({
       options: dataSourceOpts,
       initialDatabase: this.initialDatabase,

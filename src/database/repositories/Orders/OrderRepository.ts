@@ -1,9 +1,10 @@
+import { DataSource } from "typeorm";
 import OrderEntity from "../../entities/orders/OrderEntity";
 import BaseRepository from "../BaseRepository";
 
 class OrderRepository extends BaseRepository<OrderEntity> {
-  constructor() {
-    super(OrderEntity);
+  constructor(dataSource?: DataSource) {
+    super(OrderEntity, dataSource);
   }
 
   async findAllByUserId(userId: number): Promise<OrderEntity[]> {

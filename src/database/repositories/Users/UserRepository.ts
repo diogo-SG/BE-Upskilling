@@ -4,7 +4,7 @@ import BaseRepository from "../BaseRepository";
 
 class UserRepository extends BaseRepository<UserEntity> {
   constructor(dataSource?: DataSource) {
-    super(UserEntity);
+    super(UserEntity, dataSource);
   }
 
   async findOneByEmail(email: string): Promise<UserEntity | null> {
