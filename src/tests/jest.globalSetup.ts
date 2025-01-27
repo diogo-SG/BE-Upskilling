@@ -1,4 +1,6 @@
 //@ts-nocheck
+
+// This doesn't work for some reason... :'(
 import { TestDBHandler } from "./testDBHandler";
 
 export default async function () {

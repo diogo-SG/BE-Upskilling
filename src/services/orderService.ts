@@ -50,15 +50,12 @@ class OrderService extends BaseService {
 
       const addedOrder = await this.OrderRepo.create(newOrder);
 
-      // todo: insert all order lines in a single query
+      // // todo: insert all order lines in a single query
       const newOrderLines = order_lines.map((line) => {
         return { ...line, order_id: addedOrder.id };
       });
-      const addedOrderLinesPromises = newOrderLines.map((line) => {
-        return this.OrderLineRepo.create(line);
-      });
 
-      await Promise.all(addedOrderLinesPromises).catch((error) => {
+      await this.OrderLineRepo.createMultiple(newOrderLines).catch((error) => {
         throw new ErrorWithStatus(500, "Something went wrong: " + error.message);
       });
 
@@ -87,12 +84,9 @@ class OrderService extends BaseService {
       const editedOrder = await this.OrderRepo.update(newOrder);
 
       // todo partial order line update
-      const editedOrderLinesPromises = orderLines.map((line) => {
-        return this.OrderLineRepo.update(line);
-      });
 
-      await Promise.all(editedOrderLinesPromises).catch((error) => {
-        throw new ErrorWithStatus(500, "Something went wrong" + error);
+      await this.OrderLineRepo.editMultiple(orderLines).catch((error) => {
+        throw new ErrorWithStatus(500, "Something went wrong: " + error.message);
       });
 
       return { ...editedOrder, order_lines: orderLines };

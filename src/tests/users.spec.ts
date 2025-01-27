@@ -6,17 +6,17 @@ import { TestDBHandler } from "./testDBHandler";
 // And thus we can use the migrations as the starting point for each test
 
 describe("Users", () => {
-  let testDataSource: TestDBHandler;
+  let testDataHandler: TestDBHandler;
   let userService: UserService;
   /* ---------------------- Init and drop db after tests ---------------------- */
   beforeEach(async () => {
-    testDataSource = new TestDBHandler();
-    await testDataSource.createDB();
-    userService = new UserService(testDataSource.testDataSource);
+    testDataHandler = new TestDBHandler();
+    await testDataHandler.createDB();
+    userService = new UserService(testDataHandler.testDataSource);
   });
 
   afterEach(async () => {
-    await testDataSource.dropDB();
+    await testDataHandler.dropDB();
   });
 
   /* -------------------------------------------------------------------------- */

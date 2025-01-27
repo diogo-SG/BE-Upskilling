@@ -46,6 +46,16 @@ abstract class BaseRepository<T extends BaseEntity> {
   async delete(id: number): Promise<void> {
     await this.repository.delete(id);
   }
+
+  async createMultiple(data: DeepPartial<T>[]): Promise<T[]> {
+    const newEntries = await this.repository.save(data);
+    return newEntries;
+  }
+
+  async editMultiple(data: DeepPartial<T>[]): Promise<T[]> {
+    const editedEntries = await this.repository.save(data);
+    return editedEntries;
+  }
 }
 
 export default BaseRepository;
