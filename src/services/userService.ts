@@ -5,6 +5,7 @@ import UserEntity from "../database/entities/users/UserEntity";
 import { EntityNoMetadata } from "../database/types/types";
 import { BaseService } from "./BaseService";
 import { DataSource } from "typeorm";
+import dataSource from "../database/dataSource";
 
 /* -------------------------------------------------------------------------- */
 /*                                Users Service                               */
@@ -14,10 +15,10 @@ class UserService extends BaseService {
   private UserRepo: UserRepository;
   private OrderRepo: OrderRepository;
 
-  constructor(activeDataSource?: DataSource) {
+  constructor(activeDataSource: DataSource = dataSource) {
     super(activeDataSource);
-    this.UserRepo = new UserRepository(activeDataSource ?? this.dataSource);
-    this.OrderRepo = new OrderRepository(activeDataSource ?? this.dataSource);
+    this.UserRepo = new UserRepository(activeDataSource);
+    this.OrderRepo = new OrderRepository(activeDataSource);
   }
 
   /* -------------------------------------------------------------------------- */

@@ -7,6 +7,12 @@ import { EntityNoMetadata } from "../database/types/types";
 import UserEntity from "../database/entities/users/UserEntity";
 import UsersService from "../services/UserService";
 
+/* --------------------------------- Service -------------------------------- */
+
+const authService = new AuthService();
+const usersService = new UsersService();
+
+/* ------------------------------- Controller ------------------------------- */
 const AuthController = {
   login,
   logout,
@@ -39,7 +45,7 @@ async function signup(req: Request, res: Response, next: NextFunction) {
   const data = matchedData(req) as EntityNoMetadata<UserEntity>;
 
   try {
-    const newUser = await UsersService.addNew(data);
+    const newUser = await usersService.addNew(data);
     console.log(newUser);
     // 201 Created = We created a new resource
     res.status(201).json(newUser);
@@ -57,7 +63,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
   }
   const { email, password } = req.body;
 
-  const { accessToken, refreshToken } = await AuthService.login(email, password);
+  const { accessToken, refreshToken } = await authService.login(email, password);
 
   res.cookie("accessToken", accessToken, {
     maxAge: accessTokenMaxAge.ms,
@@ -83,7 +89,7 @@ async function logout(req: Request, res: Response, next: NextFunction) {
     //@ts-ignore
     const { user } = req;
 
-    await AuthService.logout(user.id);
+    await authService.logout(user.id);
 
     res.cookie("accessToken", "", {
       httpOnly: true,

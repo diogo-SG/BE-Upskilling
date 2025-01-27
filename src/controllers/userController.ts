@@ -4,6 +4,9 @@ import UsersService from "../services/UserService";
 import { matchedData, validationResult } from "express-validator";
 import UserEntity from "../database/entities/users/UserEntity";
 
+/* --------------------------------- Service -------------------------------- */
+const usersService = new UsersService();
+
 /* -------------------------------------------------------------------------- */
 /*                               User Controller                              */
 /* -------------------------------------------------------------------------- */
@@ -34,7 +37,7 @@ async function getAll(req: Request, res: Response, next: NextFunction) {
   const data = matchedData(req);
 
   const limit = parseInt(data.limit as string);
-  const fetchedUsers = await UsersService.getAll(limit);
+  const fetchedUsers = await usersService.getAll(limit);
 
   res.status(200).json(fetchedUsers);
 }
@@ -53,7 +56,7 @@ async function getSingleById(req: Request, res: Response, next: NextFunction) {
   }
 
   const userId = parseInt(req.params.id);
-  const user = await UsersService.getOneById(userId);
+  const user = await usersService.getOneById(userId);
 
   if (!user) {
     const error = new ErrorWithStatus(404, "User not found");
@@ -97,7 +100,7 @@ async function edit(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const updatedUser = await UsersService.edit(incomingUpdateData);
+    const updatedUser = await usersService.edit(incomingUpdateData);
 
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -119,7 +122,7 @@ async function remove(req: Request, res: Response, next: NextFunction) {
       next(error);
     }
     const userId = parseInt(req.params.id);
-    await UsersService.remove(userId);
+    await usersService.remove(userId);
 
     // 204 No content = We did the thing, no need to return anything
     // I guess in this case a 200 OK would also be fine with a message saying it was deleted successfully
@@ -136,7 +139,7 @@ async function remove(req: Request, res: Response, next: NextFunction) {
 
 export async function getAllOrders(req: Request, res: Response, next: NextFunction) {
   const userId = parseInt(req.params.id);
-  const orders = await UsersService.getAllOrders(userId);
+  const orders = await usersService.getAllOrders(userId);
   res.status(200).json(orders);
 }
 
