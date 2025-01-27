@@ -4,7 +4,8 @@ module.exports = {
   transform: {
     "^.+.tsx?$": ["ts-jest", {}],
   },
-  globalSetup: "./src/tests/jest.globalSetup.ts",
-  globalTeardown: "./src/tests/jest.globalTeardown.ts",
+  // This doesn't work for some reason... :'(
+  // globalSetup: "./src/tests/jest.globalSetup.ts",
+  // globalTeardown: "./src/tests/jest.globalTeardown.ts",
   openHandlesTimeout: 10000,
 };

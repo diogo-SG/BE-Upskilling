@@ -50,7 +50,6 @@ export class TestDBHandler {
   }
 
   async dropDB(dropAll = false) {
-    console.log(`Dropping test database '${this.testDatabase}'`);
     if (dropAll) {
       this.testDataSource.initialize();
       await this.testDataSource.query(
@@ -58,10 +57,14 @@ export class TestDBHandler {
       );
     }
 
-    if (this.testDataSource.isInitialized) await this.testDataSource.destroy();
-    await dropDatabase({
-      options: dataSourceOpts,
-      initialDatabase: this.initialDatabase,
-    });
+    if (this.testDataSource.isInitialized) {
+      console.log(`Dropping test database '${this.testDatabase}'`);
+
+      await this.testDataSource.destroy();
+      await dropDatabase({
+        options: dataSourceOpts,
+        initialDatabase: this.initialDatabase,
+      });
+    }
   }
 }
