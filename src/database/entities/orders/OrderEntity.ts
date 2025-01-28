@@ -2,11 +2,15 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import User from "../users/UserEntity";
 import OrderLineEntity from "./OrderLineEntity";
 import BaseEntity from "../BaseEntity";
+import UserEntity from "../users/UserEntity";
 
 @Entity("orders")
 class OrderEntity extends BaseEntity {
   @ManyToOne(() => User, (user) => user.orders, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
+  user!: UserEntity;
+
+  @Column({ type: "int", nullable: false })
   user_id!: number;
 
   // todo make enum

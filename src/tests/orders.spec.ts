@@ -35,7 +35,8 @@ describe("Orders", () => {
   });
 
   it("Should add a new order", async () => {
-    const newOrderLines: OrderLineNoMetadata[] = [
+    // todo fix types
+    const newOrderLines: any[] = [
       {
         product_id: 1,
         quantity: 2,
@@ -45,13 +46,14 @@ describe("Orders", () => {
         quantity: 1,
       },
     ];
-    const newOrder: OrderWithLinesNoMetadata = {
+    const newOrder: any = {
       status: "pending",
       user_id: 1,
-      order_lines: newOrderLines as OrderLineEntity[], // todo fix type
+      order_lines: newOrderLines as OrderLineEntity[],
     };
 
     const addedOrder = await orderService.addNew(newOrder);
+
     expect(addedOrder.user_id).toBe(1);
     expect(addedOrder.order_lines).toHaveLength(2);
 
@@ -59,6 +61,7 @@ describe("Orders", () => {
     expect(orders).toHaveLength(4);
 
     const order = await orderService.getById(4);
+
     expect(order.user_id).toBe(1);
     expect(order.order_lines).toHaveLength(2);
   });

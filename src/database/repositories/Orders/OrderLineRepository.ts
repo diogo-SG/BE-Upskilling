@@ -6,4 +6,10 @@ export class OrderLineRepository extends BaseRepository<OrderLineEntity> {
   constructor(dataSource?: DataSource) {
     super(OrderLineEntity, dataSource);
   }
+
+  getLinesByOrderId(orderId: number) {
+    return this.repository.find({
+      where: { order_id: orderId },
+    });
+  }
 }

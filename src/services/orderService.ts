@@ -36,7 +36,7 @@ class OrderService extends BaseService {
     if (!order) {
       throw new ErrorWithStatus(404, "Order not found");
     }
-    const orderLines = await this.OrderRepo.getOrderLines(orderId);
+    const orderLines = await this.OrderLineRepo.getLinesByOrderId(orderId);
 
     const orderWithLines: OrderWithLines = { ...order, order_lines: orderLines };
     return orderWithLines;
@@ -50,6 +50,10 @@ class OrderService extends BaseService {
       delete newOrder.order_lines;
 
       const addedOrder = await this.OrderRepo.create(newOrder);
+
+      order_lines.forEach((line) => {
+        line.order_id = addedOrder.id;
+      });
 
       await this.OrderLineRepo.createMultiple(order_lines).catch((error) => {
         throw new ErrorWithStatus(500, "Something went wrong: " + error.message);
