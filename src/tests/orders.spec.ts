@@ -65,4 +65,43 @@ describe("Orders", () => {
     expect(order.user_id).toBe(1);
     expect(order.order_lines).toHaveLength(2);
   });
+
+  it("Should update an order", async () => {
+    const orderUpdate: any = {
+      id: 1,
+      status: "complete",
+      user_id: 1,
+      order_lines: [
+        {
+          id: 1,
+          product_id: 1,
+          quantity: 2,
+        },
+        {
+          id: 2,
+          product_id: 2,
+          quantity: 1,
+        },
+      ],
+    };
+
+    const updatedOrder = await orderService.edit(orderUpdate);
+
+    expect(updatedOrder.user_id).toBe(1);
+    expect(updatedOrder.order_lines).toHaveLength(2);
+    const order = await orderService.getById(1);
+    expect(order.status).toBe("complete");
+  });
+
+  it("Should delete an order", async () => {
+    await orderService.remove(1);
+    const orders = await orderService.getAll();
+    expect(orders).toHaveLength(2);
+
+    // also check order lines
+    const OrderLineRepo = testDataHandler.testDataSource.getRepository(OrderLineEntity);
+    const orderLines = await OrderLineRepo.find({ where: { order_id: 1 } });
+
+    expect(orderLines).toHaveLength(0);
+  });
 });
