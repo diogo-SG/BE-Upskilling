@@ -1,4 +1,10 @@
-import { EntityNoMetadata, OrderWithLines } from "../database/types/types";
+import OrderLineEntity from "../database/entities/orders/OrderLineEntity";
+import {
+  EntityNoMetadata,
+  OrderLineNoMetadata,
+  OrderWithLines,
+  OrderWithLinesNoMetadata,
+} from "../database/types/types";
 import OrderService from "../services/OrderService";
 import { TestDBHandler } from "./testDBHandler";
 
@@ -28,24 +34,32 @@ describe("Orders", () => {
     expect(order.user_id).toBe(2);
   });
 
-  // it("Should add a new order", async () => {
-  //     const newOrder: EntityNoMetadata<OrderWithLines> = {
-  //         order_id: 4,
-  //         user_id: 1,
-  //         order_lines: [
-  //          { product_id: 1, quantity: 2 },
-  //         ],
-  //     };
+  it("Should add a new order", async () => {
+    const newOrderLines: OrderLineNoMetadata[] = [
+      {
+        product_id: 1,
+        quantity: 2,
+      },
+      {
+        product_id: 2,
+        quantity: 1,
+      },
+    ];
+    const newOrder: OrderWithLinesNoMetadata = {
+      status: "pending",
+      user_id: 1,
+      order_lines: newOrderLines as OrderLineEntity[], // todo fix type
+    };
 
-  //     const addedOrder = await orderService.addNew(newOrder);
-  //     expect(addedOrder.user_id).toBe(1);
-  //     expect(addedOrder.order_lines).toHaveLength(2);
+    const addedOrder = await orderService.addNew(newOrder);
+    expect(addedOrder.user_id).toBe(1);
+    expect(addedOrder.order_lines).toHaveLength(2);
 
-  //     const orders = await orderService.getAll();
-  //     expect(orders).toHaveLength(4);
+    const orders = await orderService.getAll();
+    expect(orders).toHaveLength(4);
 
-  //     const order = await orderService.getById(4);
-  //     expect(order.user_id).toBe(1);
-  //     expect(order.order_lines).toHaveLength(2);
-  // });
+    const order = await orderService.getById(4);
+    expect(order.user_id).toBe(1);
+    expect(order.order_lines).toHaveLength(2);
+  });
 });

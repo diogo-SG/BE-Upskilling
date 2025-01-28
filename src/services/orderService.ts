@@ -36,7 +36,8 @@ class OrderService extends BaseService {
     if (!order) {
       throw new ErrorWithStatus(404, "Order not found");
     }
-    const orderLines = await this.OrderLineRepo.findAllByOrderId(orderId);
+    const orderLines = await this.OrderRepo.getOrderLines(orderId);
+
     const orderWithLines: OrderWithLines = { ...order, order_lines: orderLines };
     return orderWithLines;
   }
@@ -50,16 +51,11 @@ class OrderService extends BaseService {
 
       const addedOrder = await this.OrderRepo.create(newOrder);
 
-      // // todo: insert all order lines in a single query
-      const newOrderLines = order_lines.map((line) => {
-        return { ...line, order_id: addedOrder.id };
-      });
-
-      await this.OrderLineRepo.createMultiple(newOrderLines).catch((error) => {
+      await this.OrderLineRepo.createMultiple(order_lines).catch((error) => {
         throw new ErrorWithStatus(500, "Something went wrong: " + error.message);
       });
 
-      return { ...addedOrder, order_lines: newOrderLines };
+      return { ...addedOrder, order_lines };
     } catch (error) {
       if (error instanceof ErrorWithStatus) {
         throw error;

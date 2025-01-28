@@ -13,6 +13,17 @@ class OrderRepository extends BaseRepository<OrderEntity> {
     });
     return orders;
   }
+
+  async getOrderLines(orderId: number) {
+    const order = await this.repository.find({
+      relations: ["order_lines"],
+      where: { id: orderId },
+    });
+    if (!order[0].order_lines) {
+      return [];
+    }
+    return order[0].order_lines;
+  }
 }
 
 export default OrderRepository;
