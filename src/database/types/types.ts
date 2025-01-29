@@ -11,10 +11,25 @@ export type EntityNoMetadata<T extends BaseEntity> = Omit<T, "id" | "created_at"
 /*                            Compound entity types                           */
 /* -------------------------------------------------------------------------- */
 
-export interface OrderWithLines extends OrderEntity {
+export type OrderLineNoMetadata = Omit<EntityNoMetadata<OrderLineEntity>, "id" | "order_id">;
+export type OrderWithLines = OrderEntity & {
   order_lines: OrderLineEntity[];
-}
+};
 
+export type OrderWithLinesNoMetadata = EntityNoMetadata<OrderEntity> & {
+  order_lines: OrderLineNoMetadata[];
+};
+
+/* -------------------------------------------------------------------------- */
+/*                             Paginated responses                            */
+/* -------------------------------------------------------------------------- */
+
+export type PaginatedQueryResponse<T> = {
+  entries: T[];
+  total: number;
+  page: number;
+  limit: number;
+};
 /* -------------------------------------------------------------------------- */
 /*                            Type checking helpers                           */
 /* -------------------------------------------------------------------------- */

@@ -1,14 +1,15 @@
-import { DataSource, DeepPartial, EntityTarget, FindOptionsWhere, Repository } from "typeorm";
+import { DataSource, DeepPartial, EntityTarget, FindOptionsOrder, FindOptionsWhere, Repository } from "typeorm";
 import dataSource from "../dataSource";
 import BaseEntity from "../entities/BaseEntity";
+import { PaginatedQueryResponse } from "../types/types";
 
 abstract class BaseRepository<T extends BaseEntity> {
   private dataSource: DataSource;
   private entity: EntityTarget<T>;
   public repository: Repository<T>;
 
-  constructor(entity: EntityTarget<T>) {
-    this.dataSource = dataSource;
+  constructor(entity: EntityTarget<T>, baseDataSource: DataSource = dataSource) {
+    this.dataSource = baseDataSource ?? dataSource;
     this.entity = entity;
     this.repository = this.dataSource.getRepository(this.entity);
   }
@@ -23,6 +24,25 @@ abstract class BaseRepository<T extends BaseEntity> {
       take: limit ? limit : 100,
     });
     return entries;
+  }
+
+  async findAllPaginated(
+    page: number,
+    limit: number,
+    sortField: string,
+    sortOrder: "ASC" | "DESC"
+  ): Promise<PaginatedQueryResponse<T> | null> {
+    // type assertion necessary for making this accessible to all repositories
+    const order = {
+      [sortField]: sortOrder,
+    } as FindOptionsOrder<T>;
+
+    const [entries, total] = await this.repository.findAndCount({
+      take: limit,
+      skip: (page - 1) * limit,
+      order,
+    });
+    return { entries, total, page, limit };
   }
 
   async findAllBy(filter: FindOptionsWhere<T>, limit?: number): Promise<T[]> {
@@ -45,6 +65,16 @@ abstract class BaseRepository<T extends BaseEntity> {
 
   async delete(id: number): Promise<void> {
     await this.repository.delete(id);
+  }
+
+  async createMultiple(data: DeepPartial<T>[]): Promise<T[]> {
+    const newEntries = await this.repository.save(data);
+    return newEntries;
+  }
+
+  async editMultiple(data: DeepPartial<T>[]): Promise<T[]> {
+    const editedEntries = await this.repository.save(data);
+    return editedEntries;
   }
 }
 

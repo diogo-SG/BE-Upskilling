@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, Unique } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, Unique } from "typeorm";
 import Order from "../orders/OrderEntity";
 import BaseEntity from "../BaseEntity";
 import OrderEntity from "../orders/OrderEntity";
@@ -18,7 +18,8 @@ class UserEntity extends BaseEntity {
   @Column({ type: "varchar", length: 100, nullable: false })
   username!: string;
 
-  @OneToMany(() => Order, (order) => order.user)
+  @OneToMany(() => Order, (order) => order.user_id)
+  @JoinColumn({ name: "orders" })
   orders?: OrderEntity[];
 }
 

@@ -24,6 +24,66 @@ export class v0_02_SeedTables1734540142083 implements MigrationInterface {
           password: "password",
           username: "janedoe",
         },
+        {
+          name: "Person 1",
+          email: "p1@sharklasers.com",
+          password: "password",
+          username: "p1",
+        },
+        {
+          name: "Person 2",
+          email: "p2@sharklasers.com",
+          password: "password",
+          username: "p2",
+        },
+        {
+          name: "Person 3",
+          email: "p3@sharklasers.com",
+          password: "password",
+          username: "p3",
+        },
+        {
+          name: "Person 4",
+          email: "p4@sharklasers.com",
+          password: "password",
+          username: "p4",
+        },
+        {
+          name: "Person 5",
+          email: "p5@sharklasers.com",
+          password: "password",
+          username: "p5",
+        },
+        {
+          name: "Person 6",
+          email: "p6@sharklasers.com",
+          password: "password",
+          username: "p6",
+        },
+        {
+          name: "Person 7",
+          email: "p7@sharklasers.com",
+          password: "password",
+          username: "p7",
+        },
+        {
+          name: "Person 8",
+          email: "p8@sharklasers.com",
+          password: "password",
+          username: "p8",
+        },
+        {
+          name: "Person 9",
+          email: "p9@sharklasers.com",
+          password: "password",
+          username: "p9",
+        },
+        {
+          name: "Person 10",
+          email: "p10@sharklasers.com",
+          password: "password",
+          username: "p10",
+        },
       ])
       .execute();
 

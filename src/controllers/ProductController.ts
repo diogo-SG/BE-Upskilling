@@ -5,6 +5,10 @@ import { matchedData, validationResult } from "express-validator";
 import { EntityNoMetadata } from "../database/types/types";
 import ProductEntity from "../database/entities/products/ProductEntity";
 
+/* --------------------------------- Service -------------------------------- */
+
+const productService = new ProductService();
+
 /* -------------------------------------------------------------------------- */
 /*                              Product controller                              */
 /* -------------------------------------------------------------------------- */
@@ -22,7 +26,7 @@ async function getAll(req: Request, res: Response, next: NextFunction) {
   const data = matchedData(req);
 
   const limit = parseInt(data.limit as string);
-  const fetchedProducts = await ProductService.getAll(limit);
+  const fetchedProducts = await productService.getAll(limit);
 
   res.status(200).json(fetchedProducts);
 }
@@ -35,7 +39,7 @@ async function getSingleById(req: Request, res: Response, next: NextFunction) {
   }
 
   const productId = parseInt(req.params.id);
-  const product = await ProductService.getById(productId);
+  const product = await productService.getById(productId);
 
   if (!product) {
     const error = new ErrorWithStatus(404, "Product not found");
@@ -55,7 +59,7 @@ async function addNew(req: Request, res: Response, next: NextFunction) {
 
   const data = matchedData(req) as EntityNoMetadata<ProductEntity>;
 
-  const newProduct = await ProductService.addNew(data);
+  const newProduct = await productService.addNew(data);
   res.status(201).json(newProduct);
 }
 
@@ -69,7 +73,7 @@ async function edit(req: Request, res: Response, next: NextFunction) {
 
   const data = matchedData(req) as ProductEntity;
 
-  const editedProduct = await ProductService.edit(data);
+  const editedProduct = await productService.edit(data);
   res.status(200).json(editedProduct);
 }
 
@@ -82,7 +86,7 @@ async function remove(req: Request, res: Response, next: NextFunction) {
   }
 
   const productId = parseInt(req.params.id);
-  await ProductService.remove(productId);
+  await productService.remove(productId);
 
   res.status(204).end();
 }

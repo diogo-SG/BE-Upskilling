@@ -4,6 +4,10 @@ import { matchedData, validationResult } from "express-validator";
 import { EntityNoMetadata, OrderWithLines } from "../database/types/types";
 import OrderService from "../services/OrderService";
 
+/* --------------------------------- Service -------------------------------- */
+
+const orderService = new OrderService();
+
 /* -------------------------------------------------------------------------- */
 /*                              Order controller                              */
 /* -------------------------------------------------------------------------- */
@@ -21,7 +25,7 @@ async function getAll(req: Request, res: Response, next: NextFunction) {
   const data = matchedData(req);
 
   const limit = parseInt(data.limit as string);
-  const fetchedOrders = await OrderService.getAll(limit);
+  const fetchedOrders = await orderService.getAll(limit);
 
   res.status(200).json(fetchedOrders);
 }
@@ -34,7 +38,7 @@ async function getSingleById(req: Request, res: Response, next: NextFunction) {
   }
 
   const orderId = parseInt(req.params.id);
-  const order = await OrderService.getById(orderId);
+  const order = await orderService.getById(orderId);
 
   if (!order) {
     const error = new ErrorWithStatus(404, "Order not found");
@@ -54,7 +58,7 @@ async function addNew(req: Request, res: Response, next: NextFunction) {
 
   const data = matchedData(req) as EntityNoMetadata<OrderWithLines>;
 
-  const newOrder = await OrderService.addNew(data);
+  const newOrder = await orderService.addNew(data);
   res.status(201).json(newOrder);
 }
 
@@ -69,7 +73,7 @@ async function edit(req: Request, res: Response, next: NextFunction) {
   try {
     const data = matchedData(req) as OrderWithLines;
 
-    const editedOrder = await OrderService.edit(data);
+    const editedOrder = await orderService.edit(data);
     res.status(200).json(editedOrder);
   } catch (error) {
     next(error);
@@ -85,7 +89,7 @@ async function remove(req: Request, res: Response, next: NextFunction) {
   }
 
   const orderId = parseInt(req.params.id);
-  await OrderService.remove(orderId);
+  await orderService.remove(orderId);
 
   res.status(204).end();
 }
