@@ -1,10 +1,4 @@
 import OrderLineEntity from "../database/entities/orders/OrderLineEntity";
-import {
-  EntityNoMetadata,
-  OrderLineNoMetadata,
-  OrderWithLines,
-  OrderWithLinesNoMetadata,
-} from "../database/types/types";
 import OrderService from "../services/OrderService";
 import { TestDBHandler } from "./testDBHandler";
 

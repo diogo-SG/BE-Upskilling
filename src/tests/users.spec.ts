@@ -24,7 +24,7 @@ describe("Users", () => {
   /* -------------------------------------------------------------------------- */
   it("should return a list of users", async () => {
     const users = await userService.getAll();
-    expect(users).toHaveLength(2);
+    expect(users).toHaveLength(12);
     expect(users[0].name).toBe("John Doe");
   });
 
@@ -53,9 +53,9 @@ describe("Users", () => {
     expect(addedUser.name).toBe("Keanu Reeves");
 
     const users = await userService.getAll();
-    expect(users).toHaveLength(3);
+    expect(users).toHaveLength(13);
 
-    const user = await userService.getOneById(3);
+    const user = await userService.getOneById(13);
     expect(user.email).toBe("keanu@sharklasers.com");
   });
 
@@ -71,7 +71,7 @@ describe("Users", () => {
     expect(updatedUser.name).toBe("Johnny Silverhand");
 
     const users = await userService.getAll();
-    expect(users).toHaveLength(2);
+    expect(users).toHaveLength(12);
 
     const user1 = await userService.getOneById(1);
     expect(user1.name).toBe("Johnny Silverhand");
@@ -84,7 +84,35 @@ describe("Users", () => {
   it("should delete a user", async () => {
     await userService.remove(1);
     const users = await userService.getAll();
-    expect(users).toHaveLength(1);
+    expect(users).toHaveLength(11);
     expect(users[0].name).toBe("Jane Doe");
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Pagination                                 */
+  /* -------------------------------------------------------------------------- */
+
+  it("should return a paginated list of users", async () => {
+    const response = await userService.getUsersPaginated(1, 5, "id", "ASC");
+    const { entries, page, limit, total } = response ?? {};
+    const users = entries ?? [];
+
+    console.log(response);
+    expect(users).toHaveLength(5);
+    expect(entries).toHaveLength(5);
+    expect(total).toBe(12);
+    expect(users[0].name).toBe("John Doe");
+  });
+
+  it("should return a paginated list of users in descending order", async () => {
+    const response = await userService.getUsersPaginated(1, 3, "id", "DESC");
+    const { entries, page, limit, total } = response ?? {};
+    const users = entries ?? [];
+
+    expect(users).toHaveLength(3);
+    expect(entries).toHaveLength(3);
+    expect(total).toBe(12);
+    // first two are John and Jane Doe
+    expect(users[0].name).toBe("Person 10");
   });
 });

@@ -21,6 +21,16 @@ export type OrderWithLinesNoMetadata = EntityNoMetadata<OrderEntity> & {
 };
 
 /* -------------------------------------------------------------------------- */
+/*                             Paginated responses                            */
+/* -------------------------------------------------------------------------- */
+
+export type PaginatedQueryResponse<T> = {
+  entries: T[];
+  total: number;
+  page: number;
+  limit: number;
+};
+/* -------------------------------------------------------------------------- */
 /*                            Type checking helpers                           */
 /* -------------------------------------------------------------------------- */
 

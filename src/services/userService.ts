@@ -2,7 +2,7 @@ import UserRepository from "../database/repositories/Users/UserRepository";
 import { ErrorWithStatus } from "../middleware/errorHandler";
 import OrderRepository from "../database/repositories/Orders/OrderRepository";
 import UserEntity from "../database/entities/users/UserEntity";
-import { EntityNoMetadata } from "../database/types/types";
+import { EntityNoMetadata, PaginatedQueryResponse } from "../database/types/types";
 import { BaseService } from "./BaseService";
 import { DataSource } from "typeorm";
 import dataSource from "../database/dataSource";
@@ -26,6 +26,17 @@ class UserService extends BaseService {
   /* -------------------------------------------------------------------------- */
   async getAll(limit?: number) {
     const users = await this.UserRepo.findAll(limit);
+    return users;
+  }
+
+  // Paginated fetch
+  async getUsersPaginated(
+    page: number,
+    limit: number,
+    sortField: keyof UserEntity,
+    sortOrder: "ASC" | "DESC"
+  ): Promise<PaginatedQueryResponse<UserEntity> | null> {
+    const users = await this.UserRepo.findAllPaginated(page, limit, sortField, sortOrder);
     return users;
   }
 
