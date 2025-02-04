@@ -21,6 +21,6 @@ AuthRouter.post("/login", checkSchema(AuthValidation.login), AuthController.logi
 
 /* --------------------------------- Logout --------------------------------- */
 
-AuthRouter.post("/logout", checkSchema(AuthValidation.logout), deserializeUser, requireAuth, AuthController.logout);
+AuthRouter.post("/logout", deserializeUser, requireAuth, AuthController.logout);
 
 export default AuthRouter;

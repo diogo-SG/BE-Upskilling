@@ -6,6 +6,11 @@ import OrderLineEntity from "./entities/orders/OrderLineEntity";
 import ProductEntity from "./entities/products/ProductEntity";
 import SessionEntity from "./entities/users/sessions/SessionEntity";
 
+import { config as configDotenv } from "dotenv";
+
+//initialize dotenv
+configDotenv();
+
 const dataSourceOpts: DataSourceOptions = {
   type: "postgres",
   host: process.env.DB_HOST || "db",

@@ -15,15 +15,6 @@ const login: Schema = {
   },
 };
 
-const logout: Schema = {
-  userId: {
-    in: ["body"],
-    isNumeric: {
-      errorMessage: "ID must be a number",
-    },
-  },
-};
-
 const signup: Schema = {
   name: {
     in: ["body"],
@@ -53,7 +44,6 @@ const signup: Schema = {
 
 const AuthValidation = {
   login,
-  logout,
   signup,
 };
 
