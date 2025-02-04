@@ -116,7 +116,8 @@ async function edit(req: Request, res: Response, next: NextFunction) {
 
   const incomingUpdateData = matchedData(req) as UserEntity;
 
-  if (!incomingUpdateData.name && !incomingUpdateData.email) {
+  // We need at least one field to update. Id is always included so we need at least one more
+  if (Object.keys(incomingUpdateData).length <= 1) {
     const error = new ErrorWithStatus(400, "At least one update field is required");
     next(error);
   }

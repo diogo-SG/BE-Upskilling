@@ -64,8 +64,20 @@ abstract class BaseRepository<T extends BaseEntity> {
   }
 
   async update(data: DeepPartial<T>): Promise<T> {
-    const updatedEntry = await this.repository.save(data);
-    return updatedEntry;
+    if (!data.id) {
+      throw new Error("Entity ID must be provided");
+    }
+
+    const existingEntry = await this.repository.findOneBy({ id: data.id } as FindOptionsWhere<T>);
+
+    if (!existingEntry) {
+      throw new Error("Entity not found");
+    }
+
+    const updatedEntry = { ...existingEntry, ...data, updated_at: new Date() };
+
+    const savedEntry = await this.repository.save(updatedEntry);
+    return savedEntry;
   }
 
   async delete(id: number): Promise<void> {
