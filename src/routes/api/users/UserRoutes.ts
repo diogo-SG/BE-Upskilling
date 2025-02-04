@@ -13,7 +13,7 @@ UserRouter.use("/:id/orders", UserOrderRouter);
 /* -------------------------------------------------------------------------- */
 /* -------------------------------- All users ------------------------------- */
 
-UserRouter.get("/", checkSchema(GenericValidation.getAll), UserController.getAll);
+UserRouter.get("/", checkSchema(UserValidation.getAllPaginated), UserController.getAllPaginated);
 
 /* ----------------------------- Single user ------------------------------ */
 

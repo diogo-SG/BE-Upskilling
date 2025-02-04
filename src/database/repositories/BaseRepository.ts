@@ -27,11 +27,16 @@ abstract class BaseRepository<T extends BaseEntity> {
   }
 
   async findAllPaginated(
-    page: number,
-    limit: number,
-    sortField: string,
-    sortOrder: "ASC" | "DESC"
+    page?: number,
+    limit?: number,
+    sortField?: string,
+    sortOrder?: "ASC" | "DESC"
   ): Promise<PaginatedQueryResponse<T> | null> {
+    if (!sortField) sortField = "id";
+    if (!sortOrder) sortOrder = "ASC";
+    if (!limit) limit = 10;
+    if (!page) page = 1;
+
     // type assertion necessary for making this accessible to all repositories
     const order = {
       [sortField]: sortOrder,
@@ -75,6 +80,11 @@ abstract class BaseRepository<T extends BaseEntity> {
   async editMultiple(data: DeepPartial<T>[]): Promise<T[]> {
     const editedEntries = await this.repository.save(data);
     return editedEntries;
+  }
+
+  getKeys(): string[] {
+    const keys = Object.keys(this.repository.metadata.propertiesMap);
+    return keys;
   }
 }
 
