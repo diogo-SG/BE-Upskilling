@@ -16,9 +16,13 @@ class OrderRepository extends BaseRepository<OrderEntity> {
     });
     return orders;
   }
+
   async findAllByUserId(userId: number): Promise<OrderEntity[]> {
     const orders = await this.repository.find({
       where: { user_id: userId },
+      relations: {
+        order_lines: true,
+      },
     });
     return orders;
   }

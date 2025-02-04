@@ -73,6 +73,7 @@ class OrderService extends BaseService {
   async edit(newOrderData: OrderWithLines) {
     try {
       const orderLines = newOrderData.order_lines;
+
       // get the existing order
       const existingOrder = await this.OrderRepo.findOneById(newOrderData.id);
       if (!existingOrder) {
