@@ -93,7 +93,10 @@ abstract class BaseRepository<T extends BaseEntity> {
   }
 
   async editMultiple(data: DeepPartial<T>[]): Promise<T[]> {
-    const editedEntries = await this.repository.save(data);
+    const dataWithNumberIds = data.map((entry) => {
+      return { ...entry, id: Number(entry.id) };
+    });
+    const editedEntries = await this.repository.save(dataWithNumberIds);
     return editedEntries;
   }
 

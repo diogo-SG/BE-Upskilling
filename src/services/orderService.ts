@@ -83,8 +83,6 @@ class OrderService extends BaseService {
 
       const editedOrder = await this.OrderRepo.update(newOrder);
 
-      // todo partial order line update
-
       await this.OrderLineRepo.editMultiple(orderLines).catch((error) => {
         throw new ErrorWithStatus(500, "Something went wrong: " + error.message);
       });

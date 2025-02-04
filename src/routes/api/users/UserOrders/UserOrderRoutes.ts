@@ -11,6 +11,6 @@ const UserOrderRouter = express.Router({ mergeParams: true });
 
 /* --------------------------- All orders for user -------------------------- */
 
-UserOrderRouter.get("/", checkSchema(GenericValidation.getAll), UserController.getAll);
+UserOrderRouter.get("/", checkSchema(GenericValidation.getAll), UserController.getAllOrders);
 
 export default UserOrderRouter;
