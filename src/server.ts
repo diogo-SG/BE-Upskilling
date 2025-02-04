@@ -5,8 +5,9 @@ import AuthRouter from "./routes/auth/AuthRoutes";
 import logger from "./middleware/logger";
 import errorHandler from "./middleware/errorHandler";
 import catchAllError from "./middleware/catchAllError";
-import dataSource from "./database/dataSource";
+import dataSource, { dataSourceOpts } from "./database/dataSource";
 import ApiRouter from "./routes/api/ApiRoutes";
+import { createDatabase } from "typeorm-extension";
 
 const PORT = process.env.PORT || 8080;
 
@@ -43,14 +44,18 @@ app.use(catchAllError);
 /*                       Start db connection and server                       */
 /* -------------------------------------------------------------------------- */
 
-dataSource
-  .initialize()
-  .then(() => {
-    console.log("Database connection established");
-    app.listen(PORT, () => {
-      console.log(`Server is running on port: ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error("Error connecting to the database: ", error);
+(async () => {
+  await createDatabase({
+    options: dataSourceOpts,
   });
+  console.log(`Database ${dataSourceOpts.database} created or already exists`);
+
+  await dataSource.initialize();
+
+  console.log("Database connection established");
+  app.listen(PORT, () => {
+    console.log(`Server is running on port: ${PORT}`);
+  });
+})().catch((error) => {
+  console.error("Error connecting to the database: ", error);
+});
