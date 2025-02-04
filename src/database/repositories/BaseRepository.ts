@@ -74,9 +74,12 @@ abstract class BaseRepository<T extends BaseEntity> {
       throw new Error("Entity not found");
     }
 
-    const updatedEntry = { ...existingEntry, ...data, updated_at: new Date() };
+    const updatedEntry = { ...existingEntry, ...data, id: Number(data.id), updated_at: new Date() };
 
-    const savedEntry = await this.repository.save(updatedEntry);
+    // id can be a string if code elsewhere is not careful to make sure it's a number
+    // so we need to cast it just to make sure
+    const savedEntry = await this.repository.save({ ...updatedEntry, id: Number(data.id) });
+
     return savedEntry;
   }
 
