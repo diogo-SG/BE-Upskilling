@@ -17,7 +17,7 @@ class OrderEntity extends BaseEntity {
   @Column({ type: "varchar", length: 100, nullable: false })
   status!: string;
 
-  @OneToMany(() => OrderLineEntity, (orderLine) => orderLine.order_id)
+  @OneToMany(() => OrderLineEntity, (orderLine) => orderLine.order)
   order_lines?: OrderLineEntity[];
 }
 

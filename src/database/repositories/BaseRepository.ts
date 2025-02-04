@@ -27,11 +27,16 @@ abstract class BaseRepository<T extends BaseEntity> {
   }
 
   async findAllPaginated(
-    page: number,
-    limit: number,
-    sortField: string,
-    sortOrder: "ASC" | "DESC"
+    page?: number,
+    limit?: number,
+    sortField?: string,
+    sortOrder?: "ASC" | "DESC"
   ): Promise<PaginatedQueryResponse<T> | null> {
+    if (!sortField) sortField = "id";
+    if (!sortOrder) sortOrder = "ASC";
+    if (!limit) limit = 10;
+    if (!page) page = 1;
+
     // type assertion necessary for making this accessible to all repositories
     const order = {
       [sortField]: sortOrder,
@@ -59,8 +64,23 @@ abstract class BaseRepository<T extends BaseEntity> {
   }
 
   async update(data: DeepPartial<T>): Promise<T> {
-    const updatedEntry = await this.repository.save(data);
-    return updatedEntry;
+    if (!data.id) {
+      throw new Error("Entity ID must be provided");
+    }
+
+    const existingEntry = await this.repository.findOneBy({ id: data.id } as FindOptionsWhere<T>);
+
+    if (!existingEntry) {
+      throw new Error("Entity not found");
+    }
+
+    const updatedEntry = { ...existingEntry, ...data, id: Number(data.id), updated_at: new Date() };
+
+    // id can be a string if code elsewhere is not careful to make sure it's a number
+    // so we need to cast it just to make sure
+    const savedEntry = await this.repository.save({ ...updatedEntry, id: Number(data.id) });
+
+    return savedEntry;
   }
 
   async delete(id: number): Promise<void> {
@@ -73,8 +93,16 @@ abstract class BaseRepository<T extends BaseEntity> {
   }
 
   async editMultiple(data: DeepPartial<T>[]): Promise<T[]> {
-    const editedEntries = await this.repository.save(data);
+    const dataWithNumberIds = data.map((entry) => {
+      return { ...entry, id: Number(entry.id) };
+    });
+    const editedEntries = await this.repository.save(dataWithNumberIds);
     return editedEntries;
+  }
+
+  getKeys(): string[] {
+    const keys = Object.keys(this.repository.metadata.propertiesMap);
+    return keys;
   }
 }
 

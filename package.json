@@ -4,7 +4,7 @@
   "description": "BE Upskilling",
   "main": "server.ts",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
     "migrate": "pnpm typeorm migration:run -- -d ./src/database/dataSource"
@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
     "express": "^4.21.1",
     "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",

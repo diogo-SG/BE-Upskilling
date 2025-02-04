@@ -18,7 +18,7 @@ class UserEntity extends BaseEntity {
   @Column({ type: "varchar", length: 100, nullable: false })
   username!: string;
 
-  @OneToMany(() => Order, (order) => order.user_id)
+  @OneToMany(() => Order, (order) => order.user)
   @JoinColumn({ name: "orders" })
   orders?: OrderEntity[];
 }

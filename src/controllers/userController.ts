@@ -13,6 +13,7 @@ const usersService = new UsersService();
 
 const UserController = {
   getAll,
+  getAllPaginated,
   getSingleById,
   edit,
   remove,
@@ -38,6 +39,27 @@ async function getAll(req: Request, res: Response, next: NextFunction) {
 
   const limit = parseInt(data.limit as string);
   const fetchedUsers = await usersService.getAll(limit);
+
+  res.status(200).json(fetchedUsers);
+}
+
+/* ------------------------ Get all users (paginated) ----------------------- */
+
+async function getAllPaginated(req: Request, res: Response, next: NextFunction) {
+  const valRes = validationResult(req);
+  if (!valRes.isEmpty()) {
+    const error = new ErrorWithStatus(400, "Invalid query params");
+    next(error);
+  }
+
+  const data = matchedData(req);
+
+  const page = parseInt(data.page as string);
+  const limit = parseInt(data.limit as string);
+  const sortField = data.sortField as keyof UserEntity;
+  const sortOrder = data.sortOrder as "ASC" | "DESC";
+
+  const fetchedUsers = await usersService.getUsersPaginated(page, limit, sortField, sortOrder);
 
   res.status(200).json(fetchedUsers);
 }
@@ -94,7 +116,8 @@ async function edit(req: Request, res: Response, next: NextFunction) {
 
   const incomingUpdateData = matchedData(req) as UserEntity;
 
-  if (!incomingUpdateData.name && !incomingUpdateData.email) {
+  // We need at least one field to update. Id is always included so we need at least one more
+  if (Object.keys(incomingUpdateData).length <= 1) {
     const error = new ErrorWithStatus(400, "At least one update field is required");
     next(error);
   }

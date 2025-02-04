@@ -6,12 +6,17 @@ import OrderLineEntity from "./entities/orders/OrderLineEntity";
 import ProductEntity from "./entities/products/ProductEntity";
 import SessionEntity from "./entities/users/sessions/SessionEntity";
 
-const dataSourceOpts: DataSourceOptions = {
+import { config as configDotenv } from "dotenv";
+
+//initialize dotenv
+configDotenv();
+
+export const dataSourceOpts: DataSourceOptions = {
   type: "postgres",
   host: process.env.DB_HOST || "db",
   username: process.env.DB_USER || "postgres",
   password: process.env.DB_PASSWORD || "password",
-  database: process.env.DB_NAME || "postgres",
+  database: process.env.DB_NAME || "upskill-db",
   port: parseInt(process.env.DB_PORT || "5432"),
   synchronize: true, // Should be turned off in production
   migrations,
