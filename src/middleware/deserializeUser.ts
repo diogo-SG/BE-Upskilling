@@ -6,7 +6,8 @@ import { ErrorWithStatus } from "./errorHandler";
 const SessionRepo = new SessionRepository();
 
 export const accessTokenMaxAge = {
-  expiresIn: "15s",
+  expiresIn: "5m", // change for testing
+  // expiresIn: "15s", // change for testing
   ms: 15 * 1000,
 };
 
@@ -21,6 +22,10 @@ async function deserializeUser(req: Request, res: Response, next: NextFunction) 
   }
 
   const { payload, expired } = verifyJWT(accessToken);
+
+  if (payload === null) {
+    return next(new ErrorWithStatus(401, "Unauthorized"));
+  }
 
   if (payload) {
     //@ts-ignore
@@ -49,9 +54,9 @@ async function deserializeUser(req: Request, res: Response, next: NextFunction) 
     secure: true,
   });
 
+  const newPayload = verifyJWT(newAccessToken).payload as any;
   //@ts-ignore
-  req.user = verifyJWT(newAccessToken).payload as any;
-
+  req.user = newPayload;
   return next();
 }
 
